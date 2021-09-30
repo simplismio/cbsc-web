@@ -13,7 +13,7 @@
 
 <div
 	class="h-screen flex flex-col 
-items-center p-10"
+items-center"
 >
 	<div class="font-bold text-5xl mt-10 mb-10">Design a CBSC</div>
 
@@ -24,6 +24,5 @@ items-center p-10"
 	{#if eventFormIsSubmitted}
 		<CommitmentForm />
 	{/if}
-
 	<EventForm />
 </div>

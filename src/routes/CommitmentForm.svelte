@@ -13,12 +13,6 @@
 		events = data;
 	});
 
-	async function getEvents() {
-		let { data, error } = await supabase.from('events').select();
-		if (error) throw new Error(error.message);
-		return data;
-	}
-
 	async function insertCommitments() {
 		const { data, error } = await supabase.from('events').insert([{ title: eventTitle }]);
 		eventTitle = '';
@@ -31,7 +25,7 @@
 
 <!-- {#await getEvents() then eventData} -->
 {#each events as event, i}
-	<div class="max-w-lg rounded overflow-hidden shadow-lg bg-gray-50 min-w-min mt-5">
+	<div class="max-w-lg rounded overflow-hidden shadow-lg bg-gray-50 w-11/12 mt-5">
 		<div class="px-6 py-4">
 			<span class="text-2xl">Event {i} : </span><span class="font-bold text-2xl">{event.title}</span
 			>
