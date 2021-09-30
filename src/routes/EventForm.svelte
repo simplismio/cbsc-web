@@ -17,7 +17,7 @@
 	}
 </script>
 
-<div class="max-w-lg rounded overflow-hidden shadow-lg mt-5">
+<div class="max-w-lg rounded overflow-hidden shadow-lg min-w-min mt-5">
 	<div class="px-6 py-4">
 		<form class="w-full max-w-lg">
 			<div class="flex items-center">

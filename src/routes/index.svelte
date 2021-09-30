@@ -9,12 +9,13 @@
 	insertEventSubmit.subscribe((value) => {
 		eventFormIsSubmitted = value;
 	});
-
-	$: console.log(eventFormIsSubmitted);
 </script>
 
-<div class="container max-w-screen-lg mx-auto p-10">
-	<div class="font-bold text-2xl mt-10">Design a CBSC</div>
+<div
+	class="h-screen flex flex-col 
+items-center p-10"
+>
+	<div class="font-bold text-5xl mt-10 mb-10">Design a CBSC</div>
 
 	{#if !eventFormIsSubmitted}
 		<CommitmentForm />
