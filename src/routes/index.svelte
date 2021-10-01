@@ -1,13 +1,14 @@
 <script>
-	import EventForm from './EventForm.svelte';
-	import CommitmentForm from './CommitmentForm.svelte';
+	import NewEventForm from './NewEventForm.svelte';
+	import ProtocolRun from './ProtocolRun.svelte';
+	import NewCommitmentForm from './NewCommitmentForm.svelte';
 
-	import { insertEventSubmit } from '$lib/store.js';
+	import { dataHasChanged } from '$lib/store.js';
 
-	let eventFormIsSubmitted;
+	let dataHasChangedIndeed;
 
-	insertEventSubmit.subscribe((value) => {
-		eventFormIsSubmitted = value;
+	dataHasChanged.subscribe((value) => {
+		dataHasChangedIndeed = value;
 	});
 </script>
 
@@ -17,12 +18,13 @@ items-center"
 >
 	<div class="font-bold text-5xl mt-10 mb-10">Design a CBSC</div>
 
-	{#if !eventFormIsSubmitted}
-		<CommitmentForm />
+	{#if !dataHasChangedIndeed}
+		<ProtocolRun />
 	{/if}
 
-	{#if eventFormIsSubmitted}
-		<CommitmentForm />
+	{#if dataHasChangedIndeed}
+		<ProtocolRun />
 	{/if}
-	<EventForm />
+	<NewEventForm />
+	<NewCommitmentForm />
 </div>
