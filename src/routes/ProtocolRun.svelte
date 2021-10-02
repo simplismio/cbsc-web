@@ -41,7 +41,7 @@
 					>
 				</div>
 				<div class="flex-grow h-15">
-					<span class="font-bold ml-2 text-xl">{event.title}</span>
+					<span class="font-bold ml-2">{event.title}</span>
 				</div>
 			</div>
 			<hr class="mt-4 bg-gray-50" />

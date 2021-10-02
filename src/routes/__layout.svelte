@@ -8,8 +8,8 @@
 
 <nav class="text-center font-bold">
 	<a href="/" class="bg-gray-100 p-2 rounded">Home</a>
-	<a href="/NewEventForm" class="ml-3 bg-yellow-100 p-2 rounded">Create Event</a>
-	<a href="/NewCommitmentForm" class="ml-3 bg-yellow-100 p-2 rounded">Create Commitment</a>
+	<a href="/NewEventForm" class="ml-3 bg-yellow-100 p-2 rounded">Create Events</a>
+	<a href="/NewCommitmentForm" class="ml-3 bg-yellow-100 p-2 rounded">Create Commitments</a>
 </nav>
 
 <slot />

@@ -2,6 +2,7 @@
 	import supabase from '$lib/db';
 	import { tick } from 'svelte';
 	import { dataHasChanged } from '$lib/store.js';
+	import IoIosAdd from 'svelte-icons/io/IoIosAdd.svelte';
 
 	let actions = [
 		{ id: 1, value: 'Commit' },
@@ -61,13 +62,8 @@
 			</select>
 		</div>
 		<div class="flex-none w-10 h-8 ...">
-			<span>
-				<input
-					class="ml-3 bg-black hover:bg-gray-400 focus:shadow-outline focus:outline-none text-white py-0 px-2 rounded"
-					type="submit"
-					value="+"
-					on:click|preventDefault={insertAction}
-				/>
+			<span on:click|preventDefault={insertAction} class="gray-400">
+				<IoIosAdd />
 			</span>
 		</div>
 	</div>
