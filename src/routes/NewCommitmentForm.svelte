@@ -6,9 +6,9 @@
 	let commitmentTitle;
 
 	async function insertCommitments() {
+		dataHasChanged.set(true);
 		const { data, error } = await supabase.from('commitments').insert([{ title: commitmentTitle }]);
 		commitmentTitle = '';
-		dataHasChanged.set(true);
 		await tick();
 		dataHasChanged.set(false);
 		return data;

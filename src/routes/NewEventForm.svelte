@@ -6,9 +6,10 @@
 	let eventTitle;
 
 	async function insertEvent() {
+		dataHasChanged.set(true);
+
 		const { data, error } = await supabase.from('events').insert([{ title: eventTitle }]);
 		eventTitle = '';
-		dataHasChanged.set(true);
 		await tick();
 		dataHasChanged.set(false);
 		return data;

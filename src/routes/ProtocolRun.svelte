@@ -2,6 +2,7 @@
 	import supabase from '$lib/db';
 	import { onMount, tick } from 'svelte';
 	import NewActionForm from './NewActionForm.svelte';
+	import DeleteActionForm from './DeleteActionForm.svelte';
 
 	let events = [];
 
@@ -32,24 +33,48 @@
 </script>
 
 {#each events as event, i}
-	<div class="max-w-lg rounded overflow-hidden shadow-lg bg-gray-50 w-11/12 mt-5">
+	<div class="h-auto max-w-lg rounded overflow-hidden shadow-xl w-11/12 mt-5">
 		<div class="px-6 py-4">
-			<span class="text-2xl">Event {i + 1} : </span><span class="font-bold text-2xl"
-				>{event.title}</span
-			>
-			{#await getActions(event.id) then actions}
-				{#each actions as action, i}
-					<div class="mt-3">
-						<span class="">Action <span class="font-bold">{action.id}</span></span>
-						<span> - </span>
-						<span class="">
-							commitment <span class="font-bold">{action.commitments.title}</span></span
-						>
+			<div class="flex">
+				<div class="flex-none w-30 h-15">
+					<span class="bg-blue-50 p-2 rounded">Event <span class="font-bold">{event.id}</span></span
+					>
+				</div>
+				<div class="flex-grow h-15">
+					<span class="font-bold ml-2 text-xl">{event.title}</span>
+				</div>
+			</div>
+			<hr class="mt-4 bg-gray-50" />
+			<div class="mt-5">
+				{#await getActions(event.id) then actions}
+					{#each actions as action, i}
+						<div class="flex mt-2">
+							<div class="flex-none w-30 h-8">
+								<span class="bg-green-50 p-2 rounded"
+									>Action <span class="font-bold">{action.id}</span></span
+								>
+							</div>
+							<div class="flex-none w-30 h-8">
+								<span class="ml-2 mr-2">commitment</span>
+							</div>
+							<div class="flex-grow h-8">
+								<span class="font-bold">{action.commitments.title}</span>
+							</div>
+							<div class="flex-none w-10 h-8">
+								<DeleteActionForm actionID={action.id} />
+							</div>
+						</div>
+					{:else}
+						<p>No actions yet</p>
+					{/each}
+
+					<hr class="mt-3 bg-gray-50" />
+
+					<div class="mt-5">
+						<NewActionForm eventID={event.id} />
 					</div>
-					<hr class="mt-2" />
-				{/each}
-				<NewActionForm eventID={event.id} />
-			{/await}
+				{/await}
+			</div>
 		</div>
 	</div>
 {:else}

@@ -14,14 +14,14 @@
 	export let eventID;
 
 	let startOptionCommitments = 'Choose option';
-	let startOptionActions = 'Create action for';
+	let startOptionActions = 'Action for';
 
 	async function insertAction() {
+		dataHasChanged.set(true);
 		const { data, error } = await supabase
 			.from('actions')
 			.insert([{ commitment_id: selectedCommitment, event_id: eventID }]);
 		selectedCommitment = startOptionCommitments;
-		dataHasChanged.set(true);
 		await tick();
 		dataHasChanged.set(false);
 	}
@@ -33,8 +33,8 @@
 </script>
 
 <form class="max-w-lg mt-3 w-full">
-	<div class="flex items-center w-full">
-		{#await getCommitments() then commitments}
+	<div class="flex mt-5">
+		<div class="flex-none w-25 h-8 ...">
 			<span class="">
 				<select bind:value={selectedAction}>
 					<option>{startOptionActions}</option>
@@ -46,26 +46,29 @@
 					{/each}
 				</select>
 			</span>
-			<span class="ml-2 mr-2">commitment</span>
-			<span class=" ">
-				<select bind:value={selectedCommitment}>
-					<option>{startOptionCommitments}</option>
-
+		</div>
+		<div class="flex-none w-30 h-8 ..."><span class="ml-2 mr-2">commitment</span></div>
+		<div class="flex-grow h-8 ...">
+			<select bind:value={selectedCommitment}>
+				<option>{startOptionCommitments}</option>
+				{#await getCommitments() then commitments}
 					{#each commitments as commitment}
 						<option value={commitment.id} class="p-5">
 							{commitment.title}
 						</option>
 					{/each}
-				</select>
-			</span>
-			<span class="ml-4">
+				{/await}
+			</select>
+		</div>
+		<div class="flex-none w-10 h-8 ...">
+			<span>
 				<input
-					class="bg-black hover:bg-gray-400 focus:shadow-outline focus:outline-none text-white py-0 px-2 rounded"
+					class="ml-3 bg-black hover:bg-gray-400 focus:shadow-outline focus:outline-none text-white py-0 px-2 rounded"
 					type="submit"
 					value="+"
 					on:click|preventDefault={insertAction}
 				/>
 			</span>
-		{/await}
+		</div>
 	</div>
 </form>
