@@ -9,15 +9,10 @@
 	});
 </script>
 
-<div
-	class="h-auto flex flex-col 
-items-center"
->
-	{#if !dataHasChangedIndeed}
-		<ProtocolRun />
-	{/if}
+{#if !dataHasChangedIndeed}
+	<ProtocolRun />
+{/if}
 
-	{#if dataHasChangedIndeed}
-		<ProtocolRun />
-	{/if}
-</div>
+{#if dataHasChangedIndeed}
+	<ProtocolRun />
+{/if}

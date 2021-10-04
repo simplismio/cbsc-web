@@ -6,7 +6,7 @@
 
 	let states = [
 		{ id: 1, value: 'committed' },
-		{ id: 2, value: 'qctivated' },
+		{ id: 2, value: 'activated' },
 		{ id: 3, value: 'satisfied' }
 	];
 
@@ -45,11 +45,11 @@
 	}
 </script>
 
+<hr />
 <form class="max-w-lg w-full">
 	<div class="flex mt-3">
-		<div class="flex-grow h-8 ...">
-			<span class="ml-2 mr-2">Set state for</span>
-
+		<div class="flex-grow h-8">
+			<span class="ml-1 mr-1">Set state for</span>
 			<select bind:value={selectedCommitment}>
 				<option>{startOptionCommitments}</option>
 				{#await getCommitments() then commitments}
@@ -61,19 +61,19 @@
 				{/await}
 			</select>
 			<span class="ml-1 mr-1">to</span>
-			<span class="">
+			<span>
 				<select bind:value={selectedState}>
 					<option>{startOptionStates}</option>
 					{#each states as state}
-						<option value={state.value} class="p-5">
+						<option value={state.value}>
 							{state.value}
 						</option>
 					{/each}
 				</select>
 			</span>
 		</div>
-		<div class="flex-none w-10 h-8 ...">
-			<span on:click|preventDefault={insertAction} class="gray-400">
+		<div class="flex-none w-10 h-8">
+			<span on:click|preventDefault={insertActionProcedure} class="gray-400">
 				<IoIosAdd />
 			</span>
 		</div>

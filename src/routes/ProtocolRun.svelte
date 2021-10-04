@@ -1,11 +1,12 @@
 <script>
 	import supabase from '$lib/db';
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import EventCard from './EventCard.svelte';
+	import Loader from './Loader.svelte';
 
 	let events = [];
 
-	async function getEvents() {
+	async function getProtocolRun() {
 		let { data: events, error } = await supabase.from('events').select(`
 				id,
 				title,
@@ -13,21 +14,16 @@
 				id
 				)
 			`);
-
 		return events;
 	}
 
 	onMount(async () => {
-		events = await getEvents();
+		events = await getProtocolRun();
 	});
 </script>
 
 {#each events as event, i}
-	<EventCard eventData={event} />
+	<EventCard eventData={event} eventI={i} />
 {:else}
-	<div class="flex items-center space-x-2 space-x-2 animate-pulse mt-10">
-		<div class="w-6 h-6 bg-gray-200 rounded-full" />
-		<div class="w-6 h-6 bg-gray-400 rounded-full" />
-		<div class="w-6 h-6 bg-gray-600 rounded-full" />
-	</div>
+	<Loader />
 {/each}
