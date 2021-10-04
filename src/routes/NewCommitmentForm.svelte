@@ -99,7 +99,7 @@
 		<form class="w-full max-w-lg mt-5">
 			<h2 class="font-bold text-2xl">Create a new commitment</h2>
 			<p class="mt-2">
-				A <span class="font-bold">commitments</span> represents promises between buyers and sellers.
+				An <span class="font-bold">commitment</span> represents promises between buyers and sellers.
 				A <span class="font-bold">fluent</span> is the variable that fulfills a commitment. For example,
 				a commitment to buy a property, is satisfied through a payment from the buyer.
 			</p>
