@@ -1,43 +1,65 @@
 <script>
 	import supabase from '$lib/db';
-	import { onMount, tick } from 'svelte';
+	import { tick } from 'svelte';
 	import { dataHasChanged } from '$lib/store.js';
-	import IoIosAdd from 'svelte-icons/io/IoIosAdd.svelte';
 	import Loader from './Loader.svelte';
-	import { identity } from 'svelte/internal';
 
-	let selectedCommitment;
-	let selectedState;
+	let showFutureActions = false;
+	let fulfillmentValue;
+
 	export let eventID;
+	export let eventI;
 
-	let startOptionCommitments = 'choose commitment';
-
-	async function insertAction() {
+	async function insertAction(_commitment_id) {
 		const { data, error } = await supabase
 			.from('actions')
-			.insert([{ commitment_id: selectedCommitment, event_id: eventID }]);
+			.insert([{ commitment_id: _commitment_id, event_id: eventID }]);
 	}
 
-	async function updateCommitmentState() {
+	async function updateCommitmentState(_commitment) {
 		const { data, error } = await supabase
 			.from('commitments')
-			.update({ state: selectedState })
-			.eq('id', selectedCommitment);
+			.update({ state_id: _commitment.states.id + 1 })
+			.eq('id', _commitment.id);
 	}
 
-	async function insertActionProcedure() {
+	async function insertActionProcedure(_commitment) {
 		dataHasChanged.set(true);
-		await insertAction();
-		await updateCommitmentState();
-		selectedCommitment = startOptionCommitments;
+		await insertAction(_commitment.id);
+		//only if completely fulfilled
+		await updateCommitmentState(_commitment);
 		await tick();
 		dataHasChanged.set(false);
+	}
+
+	function toggleFutureActions() {
+		if (showFutureActions == true) {
+			showFutureActions = false;
+		} else {
+			showFutureActions = true;
+		}
 	}
 
 	async function getCommitments() {
 		let { data, error } = await supabase
 			.from('commitments')
-			.select('id, title, states (id, state)');
+			.select('id, title, states (id, state), fluents (id, title, atomic)');
+		return data;
+	}
+
+	async function getNumericalBalance(_fluent_id) {
+		let { data, error } = await supabase
+			.from('numerical_balances')
+			.select()
+			.eq('fluent_id', _fluent_id);
+		return data;
+	}
+
+	async function getNonNumericalBalance(_fluent_id) {
+		let { data, error } = await supabase
+			.from('non_numerical_balances')
+			.select()
+			.eq('fluent_id', _fluent_id);
 		return data;
 	}
 
@@ -45,51 +67,62 @@
 		let { data, error } = await supabase.from('states').select();
 		return data;
 	}
-
-	let changed = false;
 </script>
 
-<hr />
-<form class="max-w-lg w-full">
-	<div class="flex mt-3">
-		<div class="flex-grow h-8">
-			<div>
-				{#await getCommitments() then commitments}
-					{#each commitments as commitment}
-						<div>
-							<span>
-								{commitment.title}
-							</span>
-							<span> {commitment.states.state} </span>
-						</div>
-					{/each}
-				{/await}
-			</div>
+<button on:click|preventDefault={toggleFutureActions} class=""> Show future actions </button>
 
-			<!-- {#if changed}
-				{#if selectedCommitment != 'choose commitment'}
-					<span>will be</span>
+{#if showFutureActions}
+	<div class="">
+		{#await getCommitments() then commitments}
+			{#each commitments as commitment, i}
+				<form>
+					{commitment.title}
+					{eventI + 1}.{1}
+					{commitment.title}
+					{commitment.states.state}
 
-					{#await getCurrentCommitmentState() then data}
-						<select bind:value={selectedState}>
-							{#await getStates() then states}
-								{#each states as state}
-									{#if data[0].state_id != state.id}
-										<option value={state.id}>
-											{state.state}
-										</option>
-									{/if}
-								{/each}
-							{/await}
-						</select>
+					{#await getStates() then states}
+						{#each states as state, i}
+							{#if state.id == commitment.states.id}
+								{states[i + 1].state}
+
+								{#if states[i + 1].id == 3}{commitment.fluents[0].title}
+
+									{#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
+										{#if numerical_balances.length > 0}
+											{#each numerical_balances as numerical_balance, i}
+												{numerical_balance.balance}
+												{#if commitment.fluents[0].atomic == true}
+													<input
+														bind:value={fulfillmentValue}
+														class="border"
+														placeholder="Fulfillment amount"
+													/>
+												{/if}
+											{/each}
+										{/if}
+									{/await}
+
+									{#await getNonNumericalBalance(commitment.fluents[0].id) then non_numerical_balances}
+										{#if non_numerical_balances.length > 0}
+											{#each non_numerical_balances as non_numerical_balance, i}
+												{non_numerical_balance.balance}
+											{/each}
+										{/if}
+									{/await}
+								{:else}-{/if}
+							{/if}
+						{/each}
 					{/await}
-				{/if}
-			{/if} -->
-		</div>
-		<div class="flex-none w-10 h-8">
-			<span on:click|preventDefault={insertActionProcedure} class="gray-400">
-				<IoIosAdd />
-			</span>
-		</div>
+
+					<button
+						on:click|preventDefault={() => insertActionProcedure(commitment)}
+						class="font-bold text-2xl"
+					>
+						+
+					</button>
+				</form>
+			{/each}
+		{/await}
 	</div>
-</form>
+{/if}

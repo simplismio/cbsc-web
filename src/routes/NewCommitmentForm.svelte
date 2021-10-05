@@ -92,8 +92,6 @@
 	}
 </script>
 
-{commitmentTitleBySeller != undefined}
-
 <div class="max-w-lg rounded overflow-hidden shadow-xl w-11/12 mt-5">
 	<div class="px-6 py-4">
 		<form class="w-full max-w-lg mt-5">
