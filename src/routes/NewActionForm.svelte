@@ -1,11 +1,11 @@
-<script>
+<script language="typescript">
 	import supabase from '$lib/db';
 	import { tick } from 'svelte';
 	import { dataHasChanged } from '$lib/store.js';
-	import Loader from './Loader.svelte';
 
 	let showFutureActions = false;
 	let fulfillmentValue;
+	let balance;
 
 	export let eventID;
 	export let eventI;
@@ -23,11 +23,24 @@
 			.eq('id', _commitment.id);
 	}
 
+	async function updateBalance(_fulfillmentValue, _balance, _fluent_id) {
+		let { data, error } = await supabase
+			.from('numerical_balances')
+			.update({ balance: _balance - _fulfillmentValue })
+			.eq('fluent_id', _fluent_id);
+		return data;
+	}
+
 	async function insertActionProcedure(_commitment) {
 		dataHasChanged.set(true);
 		await insertAction(_commitment.id);
+
+		//let data = await updateBalance(_commitment.fluents[0].id);
 		//only if completely fulfilled
-		await updateCommitmentState(_commitment);
+		if (fulfillmentValue < balance) {
+			await updateCommitmentState(_commitment);
+			await updateBalance(fulfillmentValue, balance, _commitment.fluents[0].id);
+		}
 		await tick();
 		dataHasChanged.set(false);
 	}
@@ -97,6 +110,7 @@
 														bind:value={fulfillmentValue}
 														class="border"
 														placeholder="Fulfillment amount"
+														on:keypress={() => (balance = numerical_balance.balance)}
 													/>
 												{/if}
 											{/each}
