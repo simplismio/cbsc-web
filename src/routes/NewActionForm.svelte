@@ -2,6 +2,7 @@
 	import supabase from '$lib/db';
 	import { tick } from 'svelte';
 	import { dataHasChanged } from '$lib/store.js';
+	import NewCommitmentForm from './NewCommitmentForm.svelte';
 
 	let showFutureActions = false;
 	let fulfillmentValue;
@@ -34,23 +35,11 @@
 	async function insertActionProcedure(_commitment) {
 		dataHasChanged.set(true);
 		await insertAction(_commitment.id);
-
-		//let data = await updateBalance(_commitment.fluents[0].id);
-		//only if completely fulfilled
-		if (fulfillmentValue < balance) {
-			await updateCommitmentState(_commitment);
-			await updateBalance(fulfillmentValue, balance, _commitment.fluents[0].id);
-		}
+		balance && fulfillmentValue < balance
+			? await updateBalance(fulfillmentValue, balance, _commitment.fluents[0].id)
+			: await updateCommitmentState(_commitment);
 		await tick();
 		dataHasChanged.set(false);
-	}
-
-	function toggleFutureActions() {
-		if (showFutureActions == true) {
-			showFutureActions = false;
-		} else {
-			showFutureActions = true;
-		}
 	}
 
 	async function getCommitments() {
@@ -82,59 +71,70 @@
 	}
 </script>
 
-<button on:click|preventDefault={toggleFutureActions} class=""> Show future actions </button>
+<button
+	on:click|preventDefault={() =>
+		showFutureActions == true ? (showFutureActions = false) : (showFutureActions = true)}
+	class=""
+>
+	Show future actions
+</button>
 
 {#if showFutureActions}
 	<div class="">
 		{#await getCommitments() then commitments}
 			{#each commitments as commitment, i}
 				<form>
-					{commitment.title}
-					{eventI + 1}.{1}
-					{commitment.title}
-					{commitment.states.state}
+					{#if commitment.states.id < 3}
+						{eventI + 1}.{1}
 
-					{#await getStates() then states}
-						{#each states as state, i}
-							{#if state.id == commitment.states.id}
-								{states[i + 1].state}
+						{commitment.title}
+						{commitment.states.state}
 
-								{#if states[i + 1].id == 3}{commitment.fluents[0].title}
+						{#await getStates() then states}
+							{#each states as state, i}
+								{#if state.id == commitment.states.id}
+									{#if states[i + 1].id == 3}
+										<span>(partially)</span>
+									{/if}
+									{states[i + 1].state}
 
-									{#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
-										{#if numerical_balances.length > 0}
-											{#each numerical_balances as numerical_balance, i}
-												{numerical_balance.balance}
-												{#if commitment.fluents[0].atomic == true}
-													<input
-														bind:value={fulfillmentValue}
-														class="border"
-														placeholder="Fulfillment amount"
-														on:keypress={() => (balance = numerical_balance.balance)}
-													/>
-												{/if}
-											{/each}
-										{/if}
-									{/await}
+									{#if states[i + 1].id == 3}{commitment.fluents[0].title}
 
-									{#await getNonNumericalBalance(commitment.fluents[0].id) then non_numerical_balances}
-										{#if non_numerical_balances.length > 0}
-											{#each non_numerical_balances as non_numerical_balance, i}
-												{non_numerical_balance.balance}
-											{/each}
-										{/if}
-									{/await}
-								{:else}-{/if}
-							{/if}
-						{/each}
-					{/await}
+										{#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
+											{#if numerical_balances.length > 0}
+												{#each numerical_balances as numerical_balance, i}
+													{numerical_balance.balance}
+													{#if commitment.fluents[0].atomic == true}
+														<input
+															bind:value={fulfillmentValue}
+															class="border"
+															placeholder="Fulfillment amount"
+															on:keypress={() => (balance = numerical_balance.balance)}
+														/>
+													{/if}
+												{/each}
+											{/if}
+										{/await}
 
-					<button
-						on:click|preventDefault={() => insertActionProcedure(commitment)}
-						class="font-bold text-2xl"
-					>
-						+
-					</button>
+										{#await getNonNumericalBalance(commitment.fluents[0].id) then non_numerical_balances}
+											{#if non_numerical_balances.length > 0}
+												{#each non_numerical_balances as non_numerical_balance, i}
+													{non_numerical_balance.balance}
+												{/each}
+											{/if}
+										{/await}
+									{:else}-{/if}
+								{/if}
+							{/each}
+						{/await}
+
+						<button
+							on:click|preventDefault={() => insertActionProcedure(commitment)}
+							class="font-bold text-2xl"
+						>
+							+
+						</button>
+					{/if}
 				</form>
 			{/each}
 		{/await}
