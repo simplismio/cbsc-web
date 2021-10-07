@@ -111,8 +111,6 @@
 	}
 </script>
 
-{fluentByDebtorIsActionOrAmount}
-
 <div class=" h=screen max-w-lg rounded overflow-hidden shadow-2xl w-11/12 mt-5">
 	<div class="px-6 py-4">
 		<form class="w-full max-w-lg mt-5">
@@ -168,7 +166,7 @@
 						</select>
 					</div>
 
-					{#if fluentByDebtorIsActionOrAmount == 'amount'}
+					{#if fluentByDebtorIsActionOrAmount == '1'}
 						<div class="col-span-6 sm:col-span-3">
 							<label for="last-name" class="block text-sm font-bold"
 								>Multiple fulfillments allowed?</label
@@ -253,7 +251,7 @@
 							</select>
 						</div>
 
-						{#if fluentByCreditorIsActionOrAmount == 'amount'}
+						{#if fluentByCreditorIsActionOrAmount == '1'}
 							<div class="col-span-6 sm:col-span-3">
 								<label for="last-name" class="block text-sm font-bold"
 									>Multiple fulfillments allowed?</label
@@ -305,7 +303,7 @@
 							>
 							through fluent
 							<span class="font-bold">{fluentTitleByDebtor.toLowerCase()}</span>
-							{#if fluentByDebtorIsActionOrAmount == 'amount' && fluentValueByDebtor != undefined}
+							{#if fluentByDebtorIsActionOrAmount == '1' && fluentValueByDebtor != undefined}
 								{#if fluentByDebtorIsAtomic == '0'}
 									for a total of {fluentValueByDebtor} in one payment{#if commitmentTitleByCreditor && fluentTitleByCreditor},{/if}
 								{:else}
@@ -318,7 +316,7 @@
 								but only if creditor (y) commits to debtor (x) to
 								<span class="font-bold">{commitmentTitleByCreditor.toLowerCase()}</span>
 								through fluent <span class="font-bold">{fluentTitleByCreditor.toLowerCase()}</span>
-								{#if fluentByCreditorIsActionOrAmount == 'amount' && fluentValueByCreditor != undefined}
+								{#if fluentByCreditorIsActionOrAmount == '1' && fluentValueByCreditor != undefined}
 									{#if fluentByCreditorIsAtomic == '0'}
 										for a total of {fluentValueByCreditor} in one payment
 									{:else}

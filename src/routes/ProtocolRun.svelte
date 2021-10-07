@@ -10,15 +10,19 @@
 		let { data: events, error } = await supabase.from('events').select(`
 				id,
 				title,
-				actions (
-				id
-				)
+				actions (id)
 			`);
 		return events;
 	}
 
 	onMount(async () => {
 		events = await getProtocolRun();
+		if (events != null) {
+			return {
+				headers: { Location: '/NewEventForm' },
+				status: 302
+			};
+		}
 	});
 </script>
 

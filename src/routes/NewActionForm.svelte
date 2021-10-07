@@ -44,7 +44,8 @@
 	async function getCommitments() {
 		let { data, error } = await supabase
 			.from('commitments')
-			.select('id, title, states (id, state), fluents (id, title, atomic)');
+			.select('id, title, states(id, state), fluents (id, title, atomic)');
+		if (error) throw new Error(error.message);
 		return data;
 	}
 
@@ -79,16 +80,13 @@
 </button>
 
 {#if showFutureActions}
-	<div class="">
+	<div class="capitalize">
 		{#await getCommitments() then commitments}
-			{commitments}
-
 			{#each commitments as commitment}
-				<!-- <form>
+				<form>
 					{#if commitment.states.id < 4}
 						{eventI + 1}.{1}
 
-						{commitment.title}
 						{commitment.states.state}
 
 						{#await getStates() then states}
@@ -98,11 +96,8 @@
 									{#if states[i + 1].id == 4}
 										<span>(partially)</span>
 									{/if}
-
 									{#if commitment.states.id == 3}{commitment.fluents[0].title}
-										{'Yeah'}
-
-										 {#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
+										{#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
 											{#if numerical_balances.length > 0}
 												{#each numerical_balances as numerical_balance, i}
 													{numerical_balance.balance}
@@ -124,12 +119,11 @@
 													{non_numerical_balance.balance}
 												{/each}
 											{/if}
-										{/await} -->
-				<!-- {/if}
+										{/await}
+									{/if}
 								{/if}
 							{/each}
 						{/await}
-
 						<button
 							on:click|preventDefault={() => insertActionProcedure(commitment)}
 							class="font-bold text-2xl"
@@ -137,10 +131,12 @@
 							+
 						</button>
 					{/if}
-				</form> 
+				</form>
 			{:else}
-				<span>Create a commitment first</span> -->
+				<span>Create a commitment first</span>
 			{/each}
+		{:catch error}
+			<span class="text-sm">{error}</span>
 		{/await}
 	</div>
 {/if}
