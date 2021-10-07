@@ -21,9 +21,9 @@
 		<form class="w-full max-w-lg mt-10">
 			<h2 class="font-bold text-2xl">Create a new event</h2>
 			<p class="mt-2">
-				A <span class="font-bold">event</span> represents promises between buyers and sellers. A
+				A <span class="font-bold">event</span> represents promises between debtors and creditors. A
 				<span class="font-bold">fluent</span> is the variable that fulfills a commitment. For example,
-				a commitment to buy a property, is satisfied through a payment from the buyer.
+				a commitment to buy a property, is satisfied through a payment from the debtor.
 			</p>
 			<p>An event is a</p>
 			<div class="flex items-center mt-3">

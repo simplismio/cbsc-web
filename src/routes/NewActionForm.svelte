@@ -2,7 +2,6 @@
 	import supabase from '$lib/db';
 	import { tick } from 'svelte';
 	import { dataHasChanged } from '$lib/store.js';
-	import NewCommitmentForm from './NewCommitmentForm.svelte';
 
 	let showFutureActions = false;
 	let fulfillmentValue;
@@ -11,10 +10,10 @@
 	export let eventID;
 	export let eventI;
 
-	async function insertAction(_commitment_id) {
+	async function insertAction(_commitment_id, _state_id) {
 		const { data, error } = await supabase
 			.from('actions')
-			.insert([{ commitment_id: _commitment_id, event_id: eventID }]);
+			.insert([{ commitment_id: _commitment_id, event_id: eventID, state_id: _state_id + 1 }]);
 	}
 
 	async function updateCommitmentState(_commitment) {
@@ -34,7 +33,7 @@
 
 	async function insertActionProcedure(_commitment) {
 		dataHasChanged.set(true);
-		await insertAction(_commitment.id);
+		await insertAction(_commitment.id, _commitment.states.id);
 		balance && fulfillmentValue < balance
 			? await updateBalance(fulfillmentValue, balance, _commitment.fluents[0].id)
 			: await updateCommitmentState(_commitment);
@@ -82,9 +81,11 @@
 {#if showFutureActions}
 	<div class="">
 		{#await getCommitments() then commitments}
-			{#each commitments as commitment, i}
-				<form>
-					{#if commitment.states.id < 3}
+			{commitments}
+
+			{#each commitments as commitment}
+				<!-- <form>
+					{#if commitment.states.id < 4}
 						{eventI + 1}.{1}
 
 						{commitment.title}
@@ -93,14 +94,15 @@
 						{#await getStates() then states}
 							{#each states as state, i}
 								{#if state.id == commitment.states.id}
-									{#if states[i + 1].id == 3}
+									{states[i + 1].state}
+									{#if states[i + 1].id == 4}
 										<span>(partially)</span>
 									{/if}
-									{states[i + 1].state}
 
-									{#if states[i + 1].id == 3}{commitment.fluents[0].title}
+									{#if commitment.states.id == 3}{commitment.fluents[0].title}
+										{'Yeah'}
 
-										{#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
+										 {#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
 											{#if numerical_balances.length > 0}
 												{#each numerical_balances as numerical_balance, i}
 													{numerical_balance.balance}
@@ -122,8 +124,8 @@
 													{non_numerical_balance.balance}
 												{/each}
 											{/if}
-										{/await}
-									{:else}-{/if}
+										{/await} -->
+				<!-- {/if}
 								{/if}
 							{/each}
 						{/await}
@@ -135,7 +137,9 @@
 							+
 						</button>
 					{/if}
-				</form>
+				</form> 
+			{:else}
+				<span>Create a commitment first</span> -->
 			{/each}
 		{/await}
 	</div>
