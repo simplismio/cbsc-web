@@ -5,10 +5,13 @@
 	import IoIosAdd from 'svelte-icons/io/IoIosAdd.svelte';
 
 	let eventTitle;
+	let eventDescription;
 
 	async function insertEvent() {
 		dataHasChanged.set(true);
-		const { data, error } = await supabase.from('events').insert([{ title: eventTitle }]);
+		const { data, error } = await supabase
+			.from('events')
+			.insert([{ title: eventTitle, description: eventDescription }]);
 		eventTitle = '';
 		await tick();
 		dataHasChanged.set(false);
@@ -21,22 +24,44 @@
 		<form class="w-full max-w-lg mt-10">
 			<h2 class="font-bold text-2xl">Create a new event</h2>
 			<p class="mt-2">
-				A <span class="font-bold">event</span> represents promises between debtors and creditors. A
-				<span class="font-bold">fluent</span> is the variable that fulfills a commitment. For example,
-				a commitment to buy a property, is satisfied through a payment from the debtor.
+				A <span class="font-bold">event</span> represents the fact that is created and added to the knowledge
+				base.
 			</p>
-			<p>An event is a</p>
-			<div class="flex items-center mt-3">
-				<input
-					class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-					type="text"
-					bind:value={eventTitle}
-					placeholder="Define a new event"
-					aria-label="Event title"
-				/>
-				<span on:click|preventDefault={insertEvent} class="w-20 h-20 mt-2">
-					<IoIosAdd />
-				</span>
+
+			<div class="grid grid-cols-6 gap-6">
+				<div class="col-span-6 sm:col-span-6 mt-10">
+					<label class="block text-sm font-bold"
+						>Event title
+						<input
+							class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+							type="text"
+							bind:value={eventTitle}
+							placeholder="e.g. Sell the house"
+							aria-label="Event title"
+						/>
+					</label>
+				</div>
+
+				<div class="col-span-6 sm:col-span-6">
+					<label class="block text-sm font-bold"
+						>Event description
+						<textarea
+							class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+							type="text"
+							bind:value={eventTitle}
+							placeholder="Describe the exact fact that is created by the actions in this event, example: Mary sells her house in 2021"
+							aria-label="Commitment title"
+						/>
+					</label>
+				</div>
+			</div>
+			<div class="flex justify-center items-center mb-5 mt-5">
+				<button
+					on:click|preventDefault={insertEvent}
+					class="bg-yellow-100 font-bold py-2 px-4 rounded mt-4 "
+				>
+					Save
+				</button>
 			</div>
 		</form>
 	</div>

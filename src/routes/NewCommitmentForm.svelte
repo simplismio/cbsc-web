@@ -334,7 +334,7 @@
 						on:click|preventDefault={insertCommitmentProcedure}
 						class="bg-yellow-100 font-bold py-2 px-4 rounded mt-4 "
 					>
-						Save commitment(s)
+						Save
 					</button>
 				</div>
 			</div>

@@ -1,5 +1,5 @@
 <script>
-	import ProtocolRun from './ProtocolRun.svelte';
+	import EventList from './EventList.svelte';
 	import { dataHasChanged } from '$lib/store.js';
 
 	let dataHasChangedIndeed;
@@ -10,9 +10,9 @@
 </script>
 
 {#if !dataHasChangedIndeed}
-	<ProtocolRun />
+	<EventList />
 {/if}
 
 {#if dataHasChangedIndeed}
-	<ProtocolRun />
+	<EventList />
 {/if}
