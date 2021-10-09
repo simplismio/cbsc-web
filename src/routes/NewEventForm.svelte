@@ -2,7 +2,6 @@
 	import supabase from '$lib/db';
 	import { dataHasChanged } from '$lib/store.js';
 	import { tick } from 'svelte';
-	import IoIosAdd from 'svelte-icons/io/IoIosAdd.svelte';
 
 	let eventTitle;
 	let eventDescription;
