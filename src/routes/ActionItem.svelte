@@ -16,13 +16,13 @@
 <div class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white">
 	<div class="w-3/12 m-auto">
 		<span
-			><span class="font-bold">Action</span>
+			><span class="font-bold pl-2">Action</span>
 			<span class="font-bold dark:bg-gray-600 rounded pl-1 pr-1">{eventI + 1}.{actionI + 1}</span
 			></span
 		>
 	</div>
 	<div class="w-8/12">
-		<p class="font-bold">
+		<p class="font-bold pl-1">
 			Commitment {actionData.commitments.title} set to {#await getStates() then states}
 				{#each states as state}
 					{#if state.id == actionData.state_id}
@@ -31,7 +31,7 @@
 				{/each}
 			{/await}
 		</p>
-		<p>Message</p>
+		<p class="pl-1">Message</p>
 	</div>
 	<div class="w-1/12 m-auto">
 		<DeleteActionButton

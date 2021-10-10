@@ -12,13 +12,13 @@
 		<div class="flex flex-wrap text-sm bg-white p-3 rounded dark:bg-black dark:text-white">
 			<div class="w-3/12 m-auto">
 				<span
-					><span class="font-bold">Event</span>
+					><span class="font-bold pl-2">Event</span>
 					<span class="font-bold dark:bg-gray-600 rounded pl-1 pr-1">{eventI + 1}</span></span
 				>
 			</div>
 			<div class="w-8/12">
-				<p class="font-bold">{eventData.title}</p>
-				<p>{eventData.description}</p>
+				<p class="font-bold pl-1">{eventData.title}</p>
+				<p class="pl-1">{eventData.description}</p>
 			</div>
 			<div class="w-1/12 m-auto">
 				<DeleteEventButton eventID={eventData.id} />

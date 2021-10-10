@@ -8,7 +8,7 @@
 
 <button
 	on:click|preventDefault={insertActionProcedure}
-	class="text-green-600 text-2xl font-bold rounded float-right"
+	class="text-green-600 text-2xl font-bold rounded pr-2 float-right"
 >
 	+
 </button>

@@ -27,7 +27,7 @@
 
 <button
 	on:click|preventDefault={deleteEventProcedure}
-	class="text-red-600 text-2xl font-bold rounded float-right"
+	class="text-red-600 text-2xl font-bold rounded pr-2 float-right"
 >
 	-
 </button>
