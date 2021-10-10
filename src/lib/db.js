@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
-import dotenv from 'dotenv';
-dotenv.config();
+import { VITE_SUPABASE_URL } from '$lib/env';
+import { VITE_SUPABASE_ANON_KEY } from '$lib/env';
+
+
 
 
 const supabase = createClient(
     // @ts-ignore
-    process.env['VITE_SUPABASE_URL'],
-    process.env['VITE_SUPABASE_ANON_KEY']
-
+    VITE_SUPABASE_URL,
+    VITE_SUPABASE_ANON_KEY
 
     //import.meta.env.,
     // @ts-ignore

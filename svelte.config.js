@@ -14,6 +14,11 @@ const config = {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
 		adapter: vercel(),
+		vite: {
+			define: {
+				'process.env': process.env,
+			},
+		},
 		// vite: {
 		// 	resolve: {
 		// 		alias: {
