@@ -13,21 +13,25 @@
 	}
 </script>
 
-<div class="flex flex-wrap text-sm bg-white p-5 mt-3 rounded">
+<div class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white">
 	<div class="w-3/12 m-auto">
-		<span class="">Action <span class="font-bold">{eventI + 1}.{actionI + 1}</span></span>
+		<span
+			><span class="font-bold">Action</span>
+			<span class="font-bold dark:bg-gray-500 rounded pl-1 pr-1">{eventI + 1}.{actionI + 1}</span
+			></span
+		>
 	</div>
 	<div class="w-8/12">
-		<span class="">Commitment</span>
-		<span class="font-bold">{actionData.commitments.title}</span>
-		<span class="">set to</span>
-		{#await getStates() then states}
-			{#each states as state}
-				{#if state.id == actionData.state_id}
-					<span class="font-bold">{state.state}</span>
-				{/if}
-			{/each}
-		{/await}
+		<p class="font-bold">
+			Commitment {actionData.commitments.title} set to {#await getStates() then states}
+				{#each states as state}
+					{#if state.id == actionData.state_id}
+						<span class="font-bold">{state.state}</span>
+					{/if}
+				{/each}
+			{/await}
+		</p>
+		<p>Message</p>
 	</div>
 	<div class="w-1/12 m-auto">
 		<DeleteActionButton

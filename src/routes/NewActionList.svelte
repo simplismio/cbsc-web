@@ -5,20 +5,12 @@
 
 	import NewActionItem from './NewActionItem.svelte';
 	import Loader from './Loader.svelte';
-	import { futureActionCounter } from '$lib/store.js';
 
-	let showFutureActions = false;
 	let fulfillmentValue;
 	let balance;
 
 	export let eventData;
 	export let eventI;
-
-	let counter;
-
-	futureActionCounter.subscribe((value) => {
-		counter = value;
-	});
 
 	async function insertAction(_commitment_id, _state_id) {
 		const { data, error } = await supabase
@@ -81,10 +73,6 @@
 	}
 </script>
 
-<div class="flex justify-center items-center mt-3 bg-yellow-50 p-2 rounded">
-	There are <span class="font-bold ml-1 mr-1"> {counter} </span> actions available for Event {eventI +
-		1}
-</div>
 <div class="rounded text-sm">
 	<div class="capitalize">
 		{#await getCommitments()}
@@ -106,6 +94,7 @@
 										numericalBalance={''}
 										nonNumericalBalance={''}
 									/>
+
 									{#if commitment.states.id == 2}
 										<NewActionItem
 											{eventData}
