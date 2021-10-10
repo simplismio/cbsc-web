@@ -111,26 +111,26 @@
 	}
 </script>
 
-<div class=" h=screen max-w-lg rounded overflow-hidden shadow-2xl w-11/12 mt-5">
+<div class="max-w-lg rounded w-11/12 mt-10 border-4 border-gray-700">
 	<div class="px-6 py-4">
 		<form class="w-full max-w-lg mt-5">
-			<h2 class="font-bold text-2xl">Create a new commitment</h2>
+			<h2 class="font-bold text-2xl dark:text-white">Create a new commitment</h2>
 			<p
 				class="mt-5
-			 text-sm"
+			 text-sm dark:text-white"
 			>
 				An <span class="font-bold">commitment</span> represents promises between debtors and
 				creditors. A <span class="font-bold">fluent</span> is the variable that fulfills a commitment.
 				For example, a commitment to buy a property, is satisfied through a payment from the debtor.
 			</p>
-			<p class="mt-3 text-sm">
+			<p class="mt-3 text-sm dark:text-white">
 				A commitment is <span class="font-bold">conditional</span>, if the debtor only fulfils its
 				commitment, based on a promise by the creditor to fulfill another commitment
 			</p>
 			<div class="items-center">
 				<div class="grid grid-cols-6 gap-6">
 					<div class="col-span-6 sm:col-span-6 mt-10">
-						<label class="block text-sm font-bold"
+						<label class="block text-sm font-bold dark:text-white"
 							>Commitment by debtor
 							<input
 								class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
@@ -143,7 +143,7 @@
 					</div>
 
 					<div class="col-span-6 sm:col-span-3">
-						<label class="block text-sm font-bold"
+						<label class="block text-sm font-bold dark:text-white"
 							>Fluent title by debtor
 							<input
 								type="text"
@@ -154,7 +154,9 @@
 						</label>
 					</div>
 					<div class="col-span-6 sm:col-span-3">
-						<label for="last-name" class="block text-sm font-bold">Action or amount</label>
+						<label for="last-name" class="block text-sm font-bold dark:text-white"
+							>Action or amount</label
+						>
 						<select
 							bind:value={fluentByDebtorIsActionOrAmount}
 							on:change|preventDefault={checkIfFluentByDebtorIsActionOrAmount}
@@ -210,12 +212,12 @@
 
 					<div class="col-span-6 sm:col-span-6 -mt-5">
 						<input type="checkbox" bind:checked={isConditional} />
-						<span class="text-xs">The debtor's commitment is conditional</span>
+						<span class="text-xs dark:text-white">The debtor's commitment is conditional</span>
 					</div>
 
 					{#if isConditional}
 						<div class="col-span-6 sm:col-span-6 mt-3">
-							<label class="block text-sm font-bold"
+							<label class="block text-sm font-bold dark:text-white"
 								>Commitment by creditor
 								<input
 									class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
@@ -228,7 +230,7 @@
 						</div>
 
 						<div class="col-span-6 sm:col-span-3">
-							<label class="block text-sm font-bold"
+							<label class="block text-sm font-bold dark:text-white"
 								>Fluent title by creditor
 								<input
 									type="text"
@@ -239,7 +241,7 @@
 							</label>
 						</div>
 						<div class="col-span-6 sm:col-span-3">
-							<label for="last-name" class="block text-sm font-bold">Action or amount</label>
+							<label class="block text-sm font-bold dark:text-white">Action or amount</label>
 							<select
 								bind:value={fluentByCreditorIsActionOrAmount}
 								on:change|preventDefault={checkIfFluentByCreditorIsActionOrAmount}
@@ -253,7 +255,7 @@
 
 						{#if fluentByCreditorIsActionOrAmount == '1'}
 							<div class="col-span-6 sm:col-span-3">
-								<label for="last-name" class="block text-sm font-bold"
+								<label for="last-name" class="block text-sm font-bold dark:text-white"
 									>Multiple fulfillments allowed?</label
 								>
 								<select
@@ -267,7 +269,7 @@
 							</div>
 
 							<div class="col-span-6 sm:col-span-3">
-								<label class="block text-sm font-bold"
+								<label class="block text-sm font-bold dark:text-white"
 									>Amount to fulfill
 									<input
 										type="number"
@@ -280,7 +282,7 @@
 
 							{#if fluentByCreditorIsAtomic == '1'}
 								<div class="col-span-6 sm:col-span-3">
-									<label class="block text-sm font-bold"
+									<label class="block text-sm font-bold dark:text-white"
 										>Payment terms
 										<input
 											type="number"
@@ -296,7 +298,7 @@
 				</div>
 
 				{#if commitmentTitleByDebtor && fluentTitleByDebtor}
-					<div class="bg-gray-100 p-2 pb-6 rounded mt-3">
+					<div class="bg-gray-900 p-2 pb-6 rounded mt-5 dark:text-white">
 						<div class="mt-5 text-center">
 							Debtor (x) commits to creditor (y) to <span class="font-bold"
 								>{commitmentTitleByDebtor.toLowerCase()}</span
@@ -332,7 +334,7 @@
 				<div class="flex justify-center items-center mb-5 mt-5">
 					<button
 						on:click|preventDefault={insertCommitmentProcedure}
-						class="bg-yellow-100 font-bold py-2 px-4 rounded mt-4 "
+						class="bg-gray-700 font-bold py-2 px-4 rounded dark:text-white"
 					>
 						Save
 					</button>

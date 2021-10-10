@@ -18,18 +18,18 @@
 	}
 </script>
 
-<div class="max-w-lg rounded overflow-hidden shadow-xl w-11/12 mt-5">
+<div class="max-w-lg rounded w-11/12 mt-10 border-4 border-gray-700">
 	<div class="px-6 py-4">
-		<form class="w-full max-w-lg mt-10">
-			<h2 class="font-bold text-2xl">Create a new event</h2>
-			<p class="mt-2">
+		<form class="w-full max-w-lg mt-5">
+			<h2 class="font-bold text-2xl dark:text-white">Create a new event</h2>
+			<p class="mt-2 dark:text-white">
 				A <span class="font-bold">event</span> represents the fact that is created and added to the knowledge
 				base.
 			</p>
 
 			<div class="grid grid-cols-6 gap-6">
 				<div class="col-span-6 sm:col-span-6 mt-10">
-					<label class="block text-sm font-bold"
+					<label class="block text-sm font-bold dark:text-white"
 						>Event title
 						<input
 							class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
@@ -42,7 +42,7 @@
 				</div>
 
 				<div class="col-span-6 sm:col-span-6">
-					<label class="block text-sm font-bold"
+					<label class="block text-sm font-bold dark:text-white"
 						>Event description
 						<textarea
 							class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
@@ -57,7 +57,7 @@
 			<div class="flex justify-center items-center mb-5 mt-5">
 				<button
 					on:click|preventDefault={insertEvent}
-					class="bg-yellow-100 font-bold py-2 px-4 rounded mt-4 "
+					class="bg-gray-700 font-bold py-2 px-4 rounded dark:text-white"
 				>
 					Save
 				</button>
