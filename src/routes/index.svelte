@@ -1,5 +1,5 @@
 <script>
-	import EventList from './EventList.svelte';
+	import EventList from '$components/EventList.svelte';
 	import { dataHasChanged } from '$lib/store.js';
 
 	let dataHasChangedIndeed;
