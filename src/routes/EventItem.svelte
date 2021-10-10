@@ -13,7 +13,7 @@
 			<div class="w-3/12 m-auto">
 				<span
 					><span class="font-bold pl-2">Event</span>
-					<span class="font-bold dark:bg-gray-600 rounded pl-1 pr-1">{eventI + 1}</span></span
+					<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">{eventI + 1}</span></span
 				>
 			</div>
 			<div class="w-8/12">

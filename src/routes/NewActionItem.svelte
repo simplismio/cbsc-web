@@ -16,7 +16,7 @@
 		<div class="w-3/12 m-auto">
 			<span
 				><span class="font-bold pl-2">Action</span><span
-					class="font-bold dark:bg-gray-600 rounded ml-1 pl-1 pr-1"
+					class="font-bold dark:bg-gray-700 rounded ml-1 pl-1 pr-1"
 					>{eventI + 1}.{eventData.actions.length + 1}</span
 				></span
 			>
@@ -36,7 +36,7 @@
 		<div class="w-3/12 m-auto">
 			<span
 				><span class="font-bold pl-2">Action</span><span
-					class="font-bold dark:bg-gray-600 rounded ml-1 pl-1 pr-1"
+					class="font-bold dark:bg-gray-700 rounded ml-1 pl-1 pr-1"
 					>{eventI + 1}.{eventData.actions.length + 1}</span
 				></span
 			>
@@ -56,7 +56,7 @@
 		<div class="w-3/12 m-auto">
 			<span
 				><span class="font-bold pl-2">Action</span><span
-					class="font-bold dark:bg-gray-600 rounded ml-1 pl-1 pr-1"
+					class="font-bold dark:bg-gray-700 rounded ml-1 pl-1 pr-1"
 					>{eventI + 1}.{eventData.actions.length + 1}</span
 				></span
 			>
