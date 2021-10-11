@@ -1,10 +1,25 @@
 <script>
+	import supabase from '$lib/db.js';
 	import ActionList from './ActionList.svelte';
 	import NewActionList from './NewActionList.svelte';
-	import DeleteEventButton from './DeleteEventButton.svelte';
+
+	import { dataHasChanged } from '$lib/store.js';
+	import { tick } from 'svelte';
 
 	export let eventData;
 	export let eventI;
+
+	async function deleteEvent() {
+		const { data, error } = await supabase.from('events').delete().eq('id', eventData.id);
+	}
+
+	async function deleteEventProcedure() {
+		dataHasChanged.set(true);
+		await deleteEvent();
+		//await updateCommitmentState();
+		await tick();
+		dataHasChanged.set(false);
+	}
 </script>
 
 <div class="max-w-lg rounded w-11/12 mt-10 items-center bg-gray-700">
@@ -21,7 +36,12 @@
 				<p class="pl-1">{eventData.description}</p>
 			</div>
 			<div class="w-1/12 m-auto">
-				<DeleteEventButton eventID={eventData.id} />
+				<button
+					on:click|preventDefault={deleteEventProcedure}
+					class="text-red-600 text-2xl font-bold rounded pr-2 float-right"
+				>
+					-
+				</button>
 			</div>
 		</div>
 		<div class="mt-1">

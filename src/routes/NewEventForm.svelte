@@ -47,7 +47,7 @@
 						<textarea
 							class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
 							type="text"
-							bind:value={eventTitle}
+							bind:value={eventDescription}
 							placeholder="Describe the exact fact that is created by the actions in this event, example: Mary sells her house in 2021"
 							aria-label="Commitment title"
 						/>

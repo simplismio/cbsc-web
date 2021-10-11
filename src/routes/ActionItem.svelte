@@ -1,6 +1,7 @@
 <script>
 	import supabase from '$lib/db.js';
-	import DeleteActionButton from './DeleteActionButton.svelte';
+	import { dataHasChanged } from '$lib/store.js';
+	import { tick } from 'svelte';
 
 	export let actionData;
 	export let eventID;
@@ -10,6 +11,25 @@
 	async function getStates() {
 		let { data, error } = await supabase.from('states').select();
 		return data;
+	}
+
+	async function deleteAction() {
+		const { data, error } = await supabase.from('actions').delete().eq('id', actionData.id);
+	}
+
+	async function updateCommitmentState() {
+		const { data, error } = await supabase
+			.from('commitments')
+			.update({ state_id: actionData.state_id - 1 })
+			.eq('id', actionData.commitment.id);
+	}
+
+	async function deleteActionProcedure() {
+		dataHasChanged.set(true);
+		await deleteAction();
+		await updateCommitmentState();
+		await tick();
+		dataHasChanged.set(false);
 	}
 </script>
 
@@ -26,7 +46,7 @@
 			Commitment {actionData.commitments.title} set to {#await getStates() then states}
 				{#each states as state}
 					{#if state.id == actionData.state_id}
-						<span class="font-bold">{state.state}</span>
+						<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">{state.state}</span>
 					{/if}
 				{/each}
 			{/await}
@@ -34,10 +54,11 @@
 		<p class="pl-1">Message</p>
 	</div>
 	<div class="w-1/12 m-auto">
-		<DeleteActionButton
-			actionID={actionData.id}
-			commitmentID={actionData.commitments.id}
-			stateID={actionData.state_id}
-		/>
+		<button
+			on:click|preventDefault={deleteActionProcedure}
+			class="text-red-600 text-2xl font-bold rounded pr-2 float-right"
+		>
+			-
+		</button>
 	</div>
 </div>
