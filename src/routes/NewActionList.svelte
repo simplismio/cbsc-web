@@ -1,10 +1,12 @@
 <script>
 	import supabase from '$lib/db.js';
 	import NewActionItem from './NewActionItem.svelte';
-	import Loader from './Loader.svelte';
+	import { onMount } from 'svelte';
 
 	export let eventData;
 	export let eventI;
+
+	let states;
 
 	async function getCommitments() {
 		let { data, error } = await supabase
@@ -36,97 +38,92 @@
 		let { data, error } = await supabase.from('states').select();
 		return data;
 	}
+
+	onMount(async () => {
+		states = await getStates();
+	});
 </script>
 
 <div class="rounded text-sm">
-	{#await getCommitments()}
-		<Loader />
-	{:then commitments}
+	{#await getCommitments() then commitments}
 		{#each commitments as commitment}
 			<form>
-				{#if commitment.states.id < 4}
-					{#await getStates() then states}
-						{#each states as state, i}
-							{#if state.id == commitment.states.id}
+				{#if commitment.states.id < 3}
+					<NewActionItem
+						{eventData}
+						{eventI}
+						commitmentData={commitment}
+						nextState={states[commitment.states.id + 1 - 1]}
+						delegate="0"
+						assign="0"
+						fluentData={''}
+						numericalBalance={''}
+						nonNumericalBalance={''}
+					/>
+
+					{#if commitment.debtor_id != 3 || commitment.creditor_id != 4}
+						<NewActionItem
+							{eventData}
+							{eventI}
+							commitmentData={commitment}
+							nextState=""
+							delegate="1"
+							assign="1"
+							fluentData={commitment.fluents[0]}
+							numericalBalance={''}
+							nonNumericalBalance={''}
+						/>
+					{/if}
+				{/if}
+
+				{#if commitment.states.id == 3}
+					{#if commitment.debtor_id != 3 || commitment.creditor_id != 4}
+						<NewActionItem
+							{eventData}
+							{eventI}
+							commitmentData={commitment}
+							nextState=""
+							delegate={commitment.debtor_id != 3 ? '1' : '0'}
+							assign={commitment.creditor_id != 4 ? '1' : '0'}
+							fluentData={commitment.fluents[0]}
+							numericalBalance={''}
+							nonNumericalBalance={''}
+						/>
+					{/if}
+					{#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
+						{#if numerical_balances.length > 0}
+							{#each numerical_balances as numerical_balance, i}
 								<NewActionItem
 									{eventData}
 									{eventI}
 									commitmentData={commitment}
-									nextState={states[i + 1]}
+									nextState={states[commitment.states.id + 1 - 1]}
 									delegate="0"
 									assign="0"
-									fluentData={commitment.states.id == 3 ? commitment.fluents[0] : ''}
-									numericalBalance={''}
+									fluentData={commitment.fluents[0]}
+									numericalBalance={numerical_balance}
 									nonNumericalBalance={''}
 								/>
+							{/each}
+						{/if}
+					{/await}
 
-								{#if commitment.states.id == 2}
-									<NewActionItem
-										{eventData}
-										{eventI}
-										commitmentData={commitment}
-										nextState=""
-										delegate="1"
-										assign="1"
-										fluentData={''}
-										numericalBalance={''}
-										nonNumericalBalance={''}
-									/>
-								{/if}
-
-								{#if commitment.states.id == 3}
-									<NewActionItem
-										{eventData}
-										{eventI}
-										commitmentData={commitment}
-										nextState=""
-										delegate="1"
-										assign="1"
-										fluentData={''}
-										numericalBalance={''}
-										nonNumericalBalance={''}
-									/>
-								{/if}
-
-								{#if commitment.states.id == 3}
-									{#await getNumericalBalance(commitment.fluents[0].id) then numerical_balances}
-										{#if numerical_balances.length > 0}
-											{#each numerical_balances as numerical_balance, i}
-												<NewActionItem
-													{eventData}
-													{eventI}
-													commitmentData={commitment}
-													nextState={states[state.id + 1]}
-													delegate="0"
-													assign="0"
-													fluentData={commitment.fluents[0]}
-													numericalBalance={numerical_balance.balance}
-													nonNumericalBalance={''}
-												/>
-											{/each}
-										{/if}
-									{/await}
-
-									{#await getNonNumericalBalance(commitment.fluents[0].id) then non_numerical_balances}
-										{#if non_numerical_balances.length > 0}
-											{#each non_numerical_balances as non_numerical_balance, i}
-												<NewActionItem
-													{eventData}
-													{eventI}
-													commitmentData={commitment}
-													nextState={states[state.id + 1]}
-													delegate="0"
-													assign="0"
-													fluentData={commitment.fluents[0]}
-													numericalBalance={''}
-													nonNumericalBalance={non_numerical_balance.balance}
-												/>
-											{/each}
-										{/if}
-									{/await}
-								{/if}
-							{/if}
-						{/each}
+					{#await getNonNumericalBalance(commitment.fluents[0].id) then non_numerical_balances}
+						{#if non_numerical_balances.length > 0}
+							{#each non_numerical_balances as non_numerical_balance, i}
+								<NewActionItem
+									{eventData}
+									{eventI}
+									commitmentData={commitment}
+									nextState={states[commitment.states.id + 1 - 1]}
+									delegate="0"
+									assign="0"
+									fluentData={commitment.fluents[0]}
+									numericalBalance={''}
+									nonNumericalBalance={non_numerical_balance.balance}
+								/>
+							{/each}
+						{/if}
 					{/await}
 				{/if}
 			</form>

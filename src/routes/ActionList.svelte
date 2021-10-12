@@ -8,7 +8,9 @@
 	async function getActions(_eventID) {
 		let { data: actions, error } = await supabase
 			.from('actions')
-			.select('id, state_id, commitments (id, title)))')
+			.select(
+				'id, state_id, commitments (id, title, debtor_id, creditor_id), messages(id, message)))'
+			)
 			.eq('event_id', _eventID);
 		if (error) throw new Error(error.message);
 		return actions;
