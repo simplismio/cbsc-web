@@ -1,5 +1,6 @@
 <script>
 	import supabase from '$lib/db.js';
+	import { cloneDeep } from 'lodash';
 
 	let scenarios = [];
 
@@ -22,43 +23,37 @@
 		//while (_continue == true) {
 		for (let i = 0; i < _commitments.length; i++) {
 			if (_commitments[i].state_id < 4) {
-				if (_commitments[i].new_state_id == undefined) {
-					_commitments[i].new_state_id = 1;
+				if (_commitments[i].simulation_state_id == undefined) {
+					_commitments[i].simulation_state_id = 1;
 				}
 
-				console.log(_commitments[i]);
+				//console.log(_commitments[i]);
 
-				switch (_commitments[i]) {
+				switch (_commitments[i].simulation_state_id) {
 					case 1:
-						// //commit
-						// _tempCommitments[_commitments[i].id].state_id = 2;
+						var dataClone = cloneDeep(_commitments[i]);
+						dataClone.simulation_state_id = 14;
 
-						// console.log(scenarios.length);
+						console.log(dataClone); //create deep clone
 
-						// //let _commitCopy = [].concat(_tempCommitments[_commitments[i].id]);
+						scenarios.push(dataClone);
 
-						// //console.log(_tempCommitments);
-						// scenarios[scenarios.length] = _tempCommitments[_commitments[i].id];
+						console.log(scenarios);
 
-						// //commit + activate
-						// _tempCommitments[_commitments[i].id].state_id = 3;
+						var dataClone2 = cloneDeep(_commitments[i]);
+						dataClone2.simulation_state_id = 15;
 
-						// //let _commitAndActivateCopy = [].concat(_tempCommitments[_commitments[i].id]);
+						console.log(dataClone2); //create deep clone
 
-						// //console.log(_tempCommitments);
+						scenarios.push(dataClone2);
 
-						// scenarios[scenarios.length] = _tempCommitments[_commitments[i].id];
-
-						// console.log(scenarios);
+						console.log(scenarios);
 
 						break;
 					case 2:
 						//activate
 						//delegate
 						//assign
-
-						console.log(_tempCommitments);
-						console.log(scenarios);
 
 						break;
 
@@ -69,16 +64,13 @@
 						//delegate
 						//assigm
 
-						console.log(_tempCommitments);
-						console.log(scenarios);
-
 						break;
 
 					default:
 				}
 			} else {
-				_tempCommitments.forEach((item, index) => {
-					if (item != 4) {
+				_commitments.forEach((item, index) => {
+					if (item.simulation_state_id != 4) {
 						_continue = true;
 					}
 				});
