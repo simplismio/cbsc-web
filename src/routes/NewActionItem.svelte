@@ -132,8 +132,8 @@
 			>
 		</div>
 		<div class="w-8/12">
-			<p class="font-bold pl-1">
-				Commitment {commitmentData.title}
+			<p class="pl-1">
+				Commitment <span class="font-bold">{commitmentData.title}</span>
 				<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">{nextState.state}</span> by
 				{#await getAgents() then agents}
 					{#each agents as agent}
@@ -162,7 +162,7 @@
 					type="text"
 					bind:value={message}
 					class="pt-1 pl-1 bg-black w-full"
-					placeholder="Add a message"
+					placeholder="Message: e.g. Committed {commitmentData.title}"
 				/>
 			{/if}
 		</div>
@@ -188,8 +188,8 @@
 			>
 		</div>
 		<div class="w-8/12">
-			<p class="font-bold pl-1">
-				Commitment {commitmentData.title}
+			<p class="pl-1">
+				Commitment <span class="font-bold">{commitmentData.title}</span>
 				<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">delegated</span> to
 				<span class="italic">XZ</span>
 			</p>
@@ -224,8 +224,8 @@
 			>
 		</div>
 		<div class="w-8/12">
-			<p class="font-bold pl-1">
-				Commitment {commitmentData.title}
+			<p class="pl-1">
+				Commitment <span class="font-bold">{commitmentData.title}</span>
 				<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">assigned</span> to
 				<span class="italic">YZ</span>
 			</p>

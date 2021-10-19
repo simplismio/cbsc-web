@@ -6,9 +6,5 @@ const supabase = createClient(
     // @ts-ignore
     VITE_SUPABASE_URL,
     VITE_SUPABASE_ANON_KEY
-
-    //import.meta.env.,
-    // @ts-ignore
-    //import.meta.env.
 )
 export default supabase;

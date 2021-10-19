@@ -128,7 +128,9 @@
 				{/if}
 			</form>
 		{:else}
-			<span>Create a commitment first</span>
+			<div class="dark:text-white p-5 font-bold bg-black text-center mt-1 rounded">
+				Add a commitment to this event to continue
+			</div>
 		{/each}
 	{:catch error}
 		<span class="text-sm">{error}</span>

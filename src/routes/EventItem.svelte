@@ -33,7 +33,10 @@
 			</div>
 			<div class="w-8/12">
 				<p class="font-bold pl-1">{eventData.title}</p>
-				<p class="pl-1">{eventData.description}</p>
+				<p class="pl-1">
+					<span class="font-bold font-bold dark:bg-yellow-800 rounded pl-1 pr-1">Fact</span>
+					{eventData.description}
+				</p>
 			</div>
 			<div class="w-1/12 m-auto">
 				<button

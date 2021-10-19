@@ -33,5 +33,5 @@
 {#each events as event, i}
 	<EventItem eventData={event} eventI={i} />
 {:else}
-	<Loader />
+	<span class="dark:text-white mt-20">No events found</span>
 {/each}

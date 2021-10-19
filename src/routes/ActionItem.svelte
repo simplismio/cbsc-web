@@ -52,8 +52,6 @@
 	}
 </script>
 
-<!-- {(console.log(actionData.commmitments.id), '')} -->
-
 <div class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white">
 	<div class="w-3/12 m-auto">
 		<span
