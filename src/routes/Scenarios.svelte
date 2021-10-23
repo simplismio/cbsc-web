@@ -38,13 +38,15 @@
 		}
 	}
 
-	async function insertSimulation(_scenario, _commitment_id, _title, _state_id) {
+	async function insertSimulation(_scenario, _commitment_id, _title, _state, _debtor, _creditor) {
 		const { data, error } = await supabase.from('simulations').insert([
 			{
 				scenario: _scenario,
 				title: _title,
 				commitment_id: _commitment_id,
-				state_id: _state_id
+				state: _state,
+				debtor: _debtor,
+				creditor: _creditor
 			}
 		]);
 		return data;
@@ -58,7 +60,7 @@
 	async function getSimulation(_commitment_id, _scenario) {
 		let { data: simulation, error } = await supabase
 			.from('simulations')
-			.select('id, title, commitment_id, state_id, scenario')
+			.select('id, title, commitment_id, state, scenario, debtor, creditor')
 			.eq('commitment_id', _commitment_id)
 			.eq('scenario', _scenario);
 
@@ -66,9 +68,39 @@
 	}
 
 	async function countUniqueScenarios() {
-		let { data: simulation, error } = await supabase.from('simulations').select('scenario');
-		console.log(simulation);
-		return simulation;
+		let _uniqueScenarios = [];
+		let _uniqueScenarioCount;
+
+		let { data: simulations, error } = await supabase.from('simulations').select('scenario');
+
+		for (var i = 0; i < simulations.length; i++) {
+			_uniqueScenarios.push(simulations[i].scenario);
+		}
+		_uniqueScenarioCount = Math.max.apply(null, _uniqueScenarios);
+
+		return _uniqueScenarioCount;
+	}
+
+	async function copySimulationToNewScenario(_scenario, _scenarios) {
+		//console.log(_scenario);
+		let { data: simulations, error } = await supabase
+			.from('simulations')
+			.select('id, title, commitment_id, state, scenario')
+			.eq('scenario', _scenario);
+
+		let _newScenario = _scenarios + 1;
+
+		for (let i = 0; i < simulations.length; i++) {
+			await insertSimulation(
+				_newScenario,
+				simulations[i].commitment_id,
+				simulations[i].title,
+				simulations[i].state,
+				simulations[i].debtor,
+				simulations[i].creditor
+			);
+		}
+		return _newScenario;
 	}
 
 	async function countScenarios(_commitments) {
@@ -78,66 +110,172 @@
 		await clearSimulations();
 
 		let _simulation;
+		let _newScenario;
 
 		for (let i = 0; i < _commitments.length; i++) {
-			await insertSimulation(1, _commitments[i].id, _commitments[i].title, 1);
+			await insertSimulation(1, _commitments[i].id, _commitments[i].title, 'defined', 'x', 'y');
 		}
 
 		while (_continue == true) {
-			let _uniqueScenarios = [];
-			let test = await countUniqueScenarios();
-			for (var i = 0; i < test.length; i++) {
-				_uniqueScenarios.push(test[i].scenario);
-			}
-			let _scenarios = Math.max.apply(null, _uniqueScenarios);
+			let _scenarios = await countUniqueScenarios();
+			console.log(_scenarios);
+
 			for (let a = 0; a < _scenarios; a++) {
 				for (let b = 0; b < _commitments.length; b++) {
-					console.log(a + 1);
-
 					_simulation = await getSimulation(_commitments[b].id, a + 1);
 
-					console.log(_simulation);
+					//console.log(_simulation);
 					if (_simulation != undefined) {
-						switch (_simulation[_simulation.length - 1].state_id) {
-							case 1:
+						switch (_simulation[_simulation.length - 1].state) {
+							case 'defined':
 								await insertSimulation(
 									a + 1,
 									_commitments[b].id,
 									_commitments[b].title,
-									_commitments[b].state_id + 1
+									'committed',
+									'x',
+									'y'
+								);
+
+								_newScenario = await copySimulationToNewScenario(
+									_simulation[_simulation.length - 1].scenario,
+									_scenarios
 								);
 
 								await insertSimulation(
 									a + 2,
 									_commitments[b].id,
 									_commitments[b].title,
-									_commitments[b].state_id
-								);
-
-								await insertSimulation(
-									a + 2,
-									_commitments[b].id,
-									_commitments[b].title,
-									_commitments[b].state_id + 2
+									'activated',
+									'x',
+									'y'
 								);
 
 								break;
-							case 2:
-								console.log('I can activate');
+							case 'committed':
+								// _newScenario = await copySimulationToNewScenario(
+								// 	_simulation[_simulation.length - 1].scenario,
+								// 	_scenarios
+								// );
+
+								// //delegate
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'canceled'
+								// );
+
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'committed'
+								// );
+
+								// _newScenario = await copySimulationToNewScenario(
+								// 	_simulation[_simulation.length - 1].scenario,
+								// 	_scenarios
+								// );
+								// //assign
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'released'
+								// );
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'committed'
+								// );
+
+								// _newScenario = await copySimulationToNewScenario(
+								// 	_simulation[_simulation.length - 1].scenario,
+								// 	_scenarios
+								// );
+								// //delegate
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'canceled'
+								// );
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'committed'
+								// );
+								// //assign
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'released'
+								// );
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'committed'
+								// );
 
 								//activate
-								//delegate
-								//assign
+								await insertSimulation(
+									_simulation[_simulation.length - 1].scenario,
+									_commitments[b].id,
+									_commitments[b].title,
+									'activated'
+								);
 
 								break;
 
-							case 3:
-								console.log('I can satisfy');
-								//satisfy
-								//full
+							case 'activated':
+								// _newScenario = await copySimulationToNewScenario(
+								// 	_simulation[_simulation.length - 1].scenario,
+								// 	_scenarios
+								// );
+
+								// //delegate
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'canceled'
+								// );
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	_simulation[_simulation.length - 1].state
+								// );
+
+								// //assign
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'released'
+								// );
+
+								// await insertSimulation(
+								// 	_newScenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	_simulation[_simulation.length - 1].state
+								// );
+
+								// //full satisfy
+								// await insertSimulation(
+								// 	_simulation[_simulation.length - 1].scenario,
+								// 	_commitments[b].id,
+								// 	_commitments[b].title,
+								// 	'satisfied'
+								// );
+
 								//partial
-								//delegate
-								//assigm
 
 								break;
 
@@ -149,7 +287,7 @@
 			_counter++;
 
 			if (_counter == 3) {
-				console.log('Enough2');
+				console.log('Enough');
 				_continue = false;
 			}
 			//console.log('another round');
