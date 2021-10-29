@@ -3,7 +3,12 @@
 	import { onMount } from 'svelte';
 	import EventItem from './EventItem.svelte';
 	import Scenarios from './Scenarios.svelte';
-	import Loader from './Loader.svelte';
+	import { newCommitment } from '$lib/store.js';
+	let newCommitmentIndeed;
+
+	newCommitment.subscribe((value) => {
+		newCommitmentIndeed = value;
+	});
 
 	let events = [];
 
@@ -28,10 +33,15 @@
 	});
 </script>
 
-<Scenarios />
+{#if newCommitmentIndeed}
+	<Scenarios />
+{/if}
+{#if !newCommitmentIndeed}
+	<Scenarios />
+{/if}
 
-{#each events as event, i}
+<!-- {#each events as event, i}
 	<EventItem eventData={event} eventI={i} />
 {:else}
 	<span class="dark:text-white mt-20">No events found</span>
-{/each}
+{/each} -->
