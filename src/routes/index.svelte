@@ -1,7 +1,6 @@
 <script>
-	import EventList from './EventList.svelte';
+	import Event from './Event.svelte';
 	import { dataHasChanged } from '$lib/store.js';
-
 	let dataHasChangedIndeed;
 
 	dataHasChanged.subscribe((value) => {
@@ -10,9 +9,5 @@
 </script>
 
 {#if !dataHasChangedIndeed}
-	<EventList />
-{/if}
-
-{#if dataHasChangedIndeed}
-	<EventList />
+	<Event />
 {/if}

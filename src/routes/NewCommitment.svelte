@@ -62,6 +62,7 @@
 		let _y = 2;
 
 		_commitment = await insertCommitment(commitmentTitleByDebtor, _state_id, _x, _y);
+
 		_fluent = await insertFluent(_commitment, fluentTitleByDebtor, fluentByDebtorIsAtomic);
 		await insertBalance(
 			_fluent,

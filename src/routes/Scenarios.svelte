@@ -4,7 +4,7 @@
 	async function getCommitments() {
 		let { data: commitments, error } = await supabase
 			.from('commitments')
-			.select('id, title, state_id, fluents(title, atomic,  balance, max_terms)');
+			.select('id, title, state, fluents(title, atomic,  balance, max_terms)');
 		return commitments;
 	}
 
@@ -114,6 +114,8 @@
 	async function simulationBuilder(_simulation, _commitment, _currentScenario) {
 		let _return = false;
 		let _newScenario;
+
+		console.log(_simulation + ' scenario ' + _currentScenario);
 
 		switch (_simulation[_simulation.length - 1].state) {
 			case 'defined':
@@ -254,31 +256,30 @@
 
 			case 'activated':
 				//partially satisfy
-
-				// if (_commitment.fluents[0].atomic == false) {
-				// 	for (let i = 0; i < _commitment.fluents[0].max_terms; i++) {
-				// 		if (i < _commitment.fluents[0].max_terms - 1) {
-				// 			await insertSimulation(
-				// 				_simulation[_simulation.length - 1].scenario,
-				// 				_commitment.id,
-				// 				_commitment.title,
-				// 				'partially satisfied',
-				// 				_simulation[_simulation.length - 1].debtor,
-				// 				_simulation[_simulation.length - 1].creditor
-				// 			);
-				// 		}
-				// 		if (i == _commitment.fluents[0].max_terms - 1) {
-				// 			await insertSimulation(
-				// 				_simulation[_simulation.length - 1].scenario,
-				// 				_commitment.id,
-				// 				_commitment.title,
-				// 				'satisfied',
-				// 				_simulation[_simulation.length - 1].debtor,
-				// 				_simulation[_simulation.length - 1].creditor
-				// 			);
-				// 		}
-				// 	}
-				// }
+				if (_commitment.fluents[0].atomic == false) {
+					// 	for (let i = 0; i < _commitment.fluents[0].max_terms; i++) {
+					// 		if (i < _commitment.fluents[0].max_terms - 1) {
+					await insertSimulation(
+						_simulation[_simulation.length - 1].scenario,
+						_commitment.id,
+						_commitment.title,
+						'partially satisfied',
+						_simulation[_simulation.length - 1].debtor,
+						_simulation[_simulation.length - 1].creditor
+					);
+					// 		}
+					// 		if (i == _commitment.fluents[0].max_terms - 1) {
+					// 			await insertSimulation(
+					// 				_simulation[_simulation.length - 1].scenario,
+					// 				_commitment.id,
+					// 				_commitment.title,
+					// 				'satisfied',
+					// 				_simulation[_simulation.length - 1].debtor,
+					// 				_simulation[_simulation.length - 1].creditor
+					// 			);
+					// 		}
+					// 	}
+				}
 
 				//full satisfy
 				if (_commitment.fluents[0].atomic == true) {
@@ -358,6 +359,7 @@
 							<div class="w-3/12 m-auto">
 								{simulationByScenario.scenario}
 							</div>
+
 							<div class="w-3/12 m-auto">
 								{simulationByScenario.title}
 							</div>
