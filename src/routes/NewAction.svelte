@@ -183,7 +183,7 @@
 							Commitment <span class="font-bold">{commitment.title}</span>
 							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">activated</span>
 							by
-							<span class="italic">{commitment.debtor}</span>
+							<span class="font-bold">{commitment.debtor}</span>
 						</p>
 
 						<input
@@ -219,7 +219,7 @@
 							Commitment <span class="font-bold">{commitment.title}</span>
 							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">activated</span>
 							by
-							<span class="italic">{commitment.debtor}</span>
+							<span class="font-bold">{commitment.debtor}</span>
 						</p>
 
 						<input
@@ -256,7 +256,7 @@
 
 							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">satisfied</span>
 							by
-							<span class="italic">{commitment.debtor}</span>
+							<span class="font-bold">{commitment.debtor}</span>
 						</p>
 
 						{#if commitment.fluents[0].title != undefined}
@@ -308,7 +308,7 @@
 						<p class="pl-1">
 							Commitment <span class="font-bold">{commitment.title}</span>
 							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">delegated</span> to
-							<span class="italic">xz</span>
+							<span class="font-bold">xz</span>
 						</p>
 						<p class="pl-1">
 							<input
@@ -344,7 +344,7 @@
 						<p class="pl-1">
 							Commitment <span class="font-bold">{commitment.title}</span>
 							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">assigned</span> to
-							<span class="italic">yz</span>
+							<span class="font-bold">yz</span>
 						</p>
 						<p class="pl-1">
 							<input

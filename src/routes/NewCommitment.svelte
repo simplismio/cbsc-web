@@ -17,39 +17,25 @@
 	let fluentByCreditorPaymentTerms = 1;
 	let isConditional;
 
-	async function insertCommitment(_title, _state_id, _debtor_id, _creditor_id) {
+	async function insertCommitment(_title, _state, _debtor, _creditor) {
 		const { data, error } = await supabase
 			.from('commitments')
-			.insert([
-				{ title: _title, state_id: _state_id, debtor_id: _debtor_id, creditor_id: _creditor_id }
-			]);
+			.insert([{ title: _title, state: _state, debtor: _debtor, creditor: _creditor }]);
 		return data;
 	}
 
-	async function insertBalance(_fluent, _actionOrAmount, _value, _terms) {
-		let _valueData;
-
-		if (_actionOrAmount == '0') {
-			_valueData = _fluent[0].title;
-			const { data, error } = await supabase
-				.from('non_numerical_balances')
-				.insert([{ fluent_id: _fluent[0].id, balance: _valueData }]);
-		}
-
-		if (_actionOrAmount == '1') {
-			const { data, error } = await supabase
-				.from('numerical_balances')
-				.insert([
-					{ fluent_id: _fluent[0].id, balance: _value, max_terms: _terms, terms_left: _terms }
-				]);
-		}
-	}
-
 	//ADD BALANCE AND ORIGINAL BALANCE/PAYMENT TERMS
-	async function insertFluent(_commitment, _title, _isAtomic) {
-		const { data, error } = await supabase
-			.from('fluents')
-			.insert([{ title: _title, commitment_id: _commitment[0].id, atomic: _isAtomic }]);
+	async function insertFluent(_commitment, _title, _isAtomic, _balance, _max_terms) {
+		const { data, error } = await supabase.from('fluents').insert([
+			{
+				title: _title,
+				commitment_id: _commitment[0].id,
+				atomic: _isAtomic,
+				balance: _balance,
+				original_balance: _balance,
+				max_terms: _max_terms
+			}
+		]);
 		return data;
 	}
 
@@ -58,28 +44,28 @@
 
 		let _commitment;
 		let _fluent;
-		let _state_id = 1;
-		let _x = 1;
-		let _y = 2;
+		let _state = 'defined';
+		let _x = 'x';
+		let _y = 'y';
 
-		_commitment = await insertCommitment(commitmentTitleByDebtor, _state_id, _x, _y);
+		_commitment = await insertCommitment(commitmentTitleByDebtor, _state, _x, _y);
 
-		_fluent = await insertFluent(_commitment, fluentTitleByDebtor, fluentByDebtorIsAtomic);
-		await insertBalance(
-			_fluent,
-			fluentByDebtorIsActionOrAmount,
+		_fluent = await insertFluent(
+			_commitment,
+			fluentTitleByDebtor,
+			fluentByDebtorIsAtomic,
 			fluentValueByDebtor,
-			fluentByDebtorPaymentTerms ?? ''
+			fluentByDebtorPaymentTerms
 		);
 
 		if (commitmentTitleByCreditor) {
-			_commitment = await insertCommitment(commitmentTitleByCreditor, _state_id, _y, _x);
-			_fluent = await insertFluent(_commitment, fluentTitleByCreditor, fluentByCreditorIsAtomic);
-			await insertBalance(
-				_fluent,
-				fluentByCreditorIsActionOrAmount,
-				fluentValueByCreditor,
-				fluentByCreditorPaymentTerms ?? ''
+			_commitment = await insertCommitment(commitmentTitleByCreditor, _state, _y, _x);
+			_fluent = await insertFluent(
+				_commitment,
+				fluentTitleByCreditor,
+				fluentByCreditorIsAtomic,
+				fluentValueByDebtor,
+				fluentByDebtorPaymentTerms
 			);
 		}
 		commitmentTitleByDebtor = '';
@@ -135,7 +121,7 @@
 						<label class="block text-sm font-bold dark:text-white"
 							>Commitment by debtor
 							<input
-								class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+								class="appearance-none border rounded w-full bg-gray-800 py-2 px-2 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 								type="text"
 								bind:value={commitmentTitleByDebtor}
 								placeholder="e.g. Buy, Sell"
@@ -150,7 +136,7 @@
 							<input
 								type="text"
 								bind:value={fluentTitleByDebtor}
-								class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+								class="appearance-none border rounded w-full py-2 px-2 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 								placeholder="e.g. Signing a contract"
 							/>
 						</label>
@@ -162,7 +148,7 @@
 						<select
 							bind:value={fluentByDebtorIsActionOrAmount}
 							on:change|preventDefault={checkIfFluentByDebtorIsActionOrAmount}
-							class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							class="mt-1 block w-full py-2 px-2 border border-gray-300 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 						>
 							<option>Action or amount</option>
 							<option value="0">Action ({fluentTitleByDebtor})</option>
@@ -172,12 +158,12 @@
 
 					{#if fluentByDebtorIsActionOrAmount == '1'}
 						<div class="col-span-6 sm:col-span-3">
-							<label for="last-name" class="block text-sm font-bold"
+							<label for="last-name" class="block text-sm font-bold dark:text-white"
 								>Multiple fulfillments allowed?</label
 							>
 							<select
 								bind:value={fluentByDebtorIsAtomic}
-								class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+								class="mt-1 block w-full py-2 px-2 border border-gray-300 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							>
 								<option>Choose an option</option>
 								<option value="0">No</option>
@@ -186,12 +172,12 @@
 						</div>
 
 						<div class="col-span-6 sm:col-span-3">
-							<label class="block text-sm font-bold"
+							<label class="block text-sm font-bold dark:text-white"
 								>Amount to fulfill
 								<input
 									type="number"
 									bind:value={fluentValueByDebtor}
-									class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+									class="appearance-none border rounded w-full py-2 px-2 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 									placeholder="e.g. $50"
 								/>
 							</label>
@@ -199,12 +185,12 @@
 
 						{#if fluentByDebtorIsAtomic == '1'}
 							<div class="col-span-6 sm:col-span-3">
-								<label class="block text-sm font-bold"
+								<label class="block text-sm font-bold dark:text-white"
 									>Payment terms
 									<input
 										type="number"
 										bind:value={fluentByDebtorPaymentTerms}
-										class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+										class="appearance-none border rounded w-full py-2 px-2 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 										placeholder="e.g. 3"
 									/>
 								</label>
@@ -222,7 +208,7 @@
 							<label class="block text-sm font-bold dark:text-white"
 								>Commitment by creditor
 								<input
-									class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+									class="appearance-none border rounded w-full py-2 px-2 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 									type="text"
 									bind:value={commitmentTitleByCreditor}
 									placeholder="e.g. Buy, Sell"
@@ -237,7 +223,7 @@
 								<input
 									type="text"
 									bind:value={fluentTitleByCreditor}
-									class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+									class="appearance-none border rounded w-full py-2 px-2 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 									placeholder="e.g. Signing a contract"
 								/>
 							</label>
@@ -247,7 +233,7 @@
 							<select
 								bind:value={fluentByCreditorIsActionOrAmount}
 								on:change|preventDefault={checkIfFluentByCreditorIsActionOrAmount}
-								class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+								class="mt-1 block w-full border border-gray-300 py-2 px-2 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							>
 								<option>Action or amount</option>
 								<option value="0">Action ({fluentTitleByCreditor})</option>
@@ -262,7 +248,7 @@
 								>
 								<select
 									bind:value={fluentByCreditorIsAtomic}
-									class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+									class="mt-1 block w-full border border-gray-300 py-2 px-2 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 								>
 									<option>Choose an option</option>
 									<option value="0">No</option>
@@ -276,7 +262,7 @@
 									<input
 										type="number"
 										bind:value={fluentValueByCreditor}
-										class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+										class="appearance-none border rounded w-full py-2 px-2 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 										placeholder="e.g. $50"
 									/>
 								</label>
@@ -289,7 +275,7 @@
 										<input
 											type="number"
 											bind:value={fluentByCreditorPaymentTerms}
-											class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+											class="appearance-none border rounded w-full py-2 px-2 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 											placeholder="e.g. $50"
 										/>
 									</label>

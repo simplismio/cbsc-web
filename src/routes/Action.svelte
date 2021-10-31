@@ -79,18 +79,20 @@
 			</div>
 			<div class="w-8/12 m-auto">
 				<p class="pl-1">
-					Commitment {action.commitments.title}
+					Commitment <span class="font-bold">{action.commitments.title}</span>
 					<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">{action.state}</span>
 					{#if action.state === 'satisfied' && action.fulfillment_value != null}
 						({action.fulfillment_value}/{action.commitments.fluents[0].original_balance})
 					{/if}
 					by
-					{#if action.state === 'commited' || action.state === 'activated' || action.state === 'satisfied' || action.state === 'canceled'}
-						<span class="italic">{action.commitments.debtor} </span>
-					{/if}
-					{#if action.state === 'released'}
-						<span class="italic">{action.commitments.creditor} </span>
-					{/if}
+					<span class="font-bold">
+						{#if action.state === 'commited' || action.state === 'activated' || action.state === 'satisfied' || action.state === 'canceled'}
+							{action.commitments.debtor}
+						{/if}
+						{#if action.state === 'released'}
+							{action.commitments.creditor}
+						{/if}
+					</span>
 				</p>
 				{#if action.message != null}
 					<p class="pl-1">{action.message}</p>

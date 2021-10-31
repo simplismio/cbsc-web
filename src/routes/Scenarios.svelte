@@ -1,6 +1,9 @@
 <script>
 	import supabase from '$lib/db.js';
 
+	let totalScenarios;
+	let calculating;
+
 	async function getCommitments() {
 		let { data: commitments, error } = await supabase
 			.from('commitments')
@@ -114,8 +117,6 @@
 	async function simulationBuilder(_simulation, _commitment, _currentScenario) {
 		let _return = false;
 		let _newScenario;
-
-		console.log(_simulation + ' scenario ' + _currentScenario);
 
 		switch (_simulation[_simulation.length - 1].state) {
 			case 'defined':
@@ -256,33 +257,21 @@
 
 			case 'activated':
 				//partially satisfy
-				if (_commitment.fluents[0].atomic == false) {
-					// 	for (let i = 0; i < _commitment.fluents[0].max_terms; i++) {
-					// 		if (i < _commitment.fluents[0].max_terms - 1) {
-					await insertSimulation(
-						_simulation[_simulation.length - 1].scenario,
-						_commitment.id,
-						_commitment.title,
-						'partially satisfied',
-						_simulation[_simulation.length - 1].debtor,
-						_simulation[_simulation.length - 1].creditor
-					);
-					// 		}
-					// 		if (i == _commitment.fluents[0].max_terms - 1) {
-					// 			await insertSimulation(
-					// 				_simulation[_simulation.length - 1].scenario,
-					// 				_commitment.id,
-					// 				_commitment.title,
-					// 				'satisfied',
-					// 				_simulation[_simulation.length - 1].debtor,
-					// 				_simulation[_simulation.length - 1].creditor
-					// 			);
-					// 		}
-					// 	}
-				}
+				if (_commitment.fluents[0].atomic === false) {
+					let _counter = 1;
 
-				//full satisfy
-				if (_commitment.fluents[0].atomic == true) {
+					do {
+						await insertSimulation(
+							_simulation[_simulation.length - 1].scenario,
+							_commitment.id,
+							_commitment.title,
+							'satisfied (partial)',
+							_simulation[_simulation.length - 1].debtor,
+							_simulation[_simulation.length - 1].creditor
+						);
+						_counter++;
+					} while (_counter <= _commitment.fluents[0].max_terms - 1);
+
 					await insertSimulation(
 						_simulation[_simulation.length - 1].scenario,
 						_commitment.id,
@@ -293,15 +282,17 @@
 					);
 				}
 
-				await insertSimulation(
-					_simulation[_simulation.length - 1].scenario,
-					_commitment.id,
-					_commitment.title,
-					'satisfied',
-					_simulation[_simulation.length - 1].debtor,
-					_simulation[_simulation.length - 1].creditor
-				);
-
+				//full satisfy
+				if (_commitment.fluents[0].atomic === true) {
+					await insertSimulation(
+						_simulation[_simulation.length - 1].scenario,
+						_commitment.id,
+						_commitment.title,
+						'satisfied',
+						_simulation[_simulation.length - 1].debtor,
+						_simulation[_simulation.length - 1].creditor
+					);
+				}
 				_return = true;
 				break;
 			default:
@@ -310,6 +301,8 @@
 	}
 
 	async function countScenarios() {
+		calculating = true;
+
 		try {
 			await clearSimulations();
 			let _scenarioCounter = 0;
@@ -335,35 +328,61 @@
 					_scenarios = await countUniqueScenarios();
 				}
 			}
-			return _scenarios;
+			totalScenarios = _scenarios;
+			calculating = false;
 		} catch (err) {
 			console.log(err.message);
 		}
 	}
 </script>
 
-{#await countScenarios() then scenarioTotal}
+<div class="mt-10">
+	<p class="text-white">
+		Step 1: <span class="ml-3">
+			<button on:click|preventDefault={countScenarios} class="font-bold dark:text-white">
+				Count unique scenarios
+			</button>
+		</span>
+		{#if totalScenarios != undefined}
+			<span class="bg-green-800  py-1 px-1 rounded font-bold text-sm"
+				>{totalScenarios} scenarios</span
+			>
+		{/if}
+		{#if calculating == true}
+			<span class="bg-green-800  py-1 px-1 rounded font-bold text-sm">busy</span>
+		{/if}
+	</p>
+
+	<p class="dark:text-white mt-5">
+		Step 2: <span class="font-bold ml-2">Run simulation in Truffle (command line)</span>
+	</p>
+
+	<p class="text-white mt-5">
+		Step 3 <span class="ml-3">
+			<button class="font-bold dark:text-white"> Show results </button>
+		</span>
+	</p>
+</div>
+
+<!-- {#await countScenarios() then scenarioTotal}
 	<div class="mt-10">
 		<span class="dark:text-white"
 			>There are <span class="font-bold">{scenarioTotal}</span> possible scenarios for this contract</span
 		>
-	</div>
-	{#await getSimulations() then simulations}
+	</div> -->
+<!-- {#await getSimulations() then simulations}
 		{#each simulations as simulation, i}
 			{#if i + 1 < scenarioTotal}
 				{#await getSimulationsByScenario(i + 1) then simulationsByScenario}
 					{#each simulationsByScenario as simulationByScenario, i}
-						<div
-							class="flex flex-wrap text-sm bg-white p-2 mt-1 rounded dark:bg-black dark:text-white"
-						>
+						<div class="flex flex-wrap text-sm bg-white p-3 rounded dark:bg-black dark:text-white">
 							<div class="w-3/12 m-auto">
 								{simulationByScenario.scenario}
 							</div>
-
-							<div class="w-3/12 m-auto">
+							<div class="w-5/12">
 								{simulationByScenario.title}
 							</div>
-							<div class="w-3/12 m-auto">
+							<div class="w-4/12 m-auto">
 								{simulationByScenario.state}
 							</div>
 						</div>
@@ -371,7 +390,7 @@
 				{/await}
 			{/if}
 		{/each}
-	{/await}
-{:catch error}
+	{/await} -->
+<!-- {:catch error}
 	<span class="text-sm">{error}</span>
-{/await}
+{/await} -->

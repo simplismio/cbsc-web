@@ -32,7 +32,7 @@
 					<label class="block text-sm font-bold dark:text-white"
 						>Event title
 						<input
-							class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+							class="appearance-none border rounded w-full py-2 px-2 border border-gray-300 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 							type="text"
 							bind:value={eventTitle}
 							placeholder="e.g. Sell the house"
@@ -45,7 +45,7 @@
 					<label class="block text-sm font-bold dark:text-white"
 						>Event description
 						<textarea
-							class="appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1"
+							class="appearance-none border rounded w-full py-2 px-2 border border-gray-300 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline mt-1"
 							type="text"
 							bind:value={eventDescription}
 							placeholder="Describe the exact fact that is created by the actions in this event, example: Mary sells her house in 2021"
