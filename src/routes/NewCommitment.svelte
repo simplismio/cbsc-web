@@ -45,6 +45,7 @@
 		}
 	}
 
+	//ADD BALANCE AND ORIGINAL BALANCE/PAYMENT TERMS
 	async function insertFluent(_commitment, _title, _isAtomic) {
 		const { data, error } = await supabase
 			.from('fluents')

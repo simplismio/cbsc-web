@@ -29,11 +29,27 @@
 		return;
 	}
 
+	async function updateFluent(_fluent, _fulfillment_value) {
+		const { data, error } = await supabase
+			.from('fluents')
+			.update({ balance: _fluent.balance + _fulfillment_value, terms_left: _fluent.terms_left + 1 })
+			.eq('id', _fluent.id);
+		return;
+	}
+
 	async function deleteActionProcedure(_action) {
 		dataHasChanged.set(true);
 		await deleteAction(_action);
-		dataHasChanged.set(false);
+
+		if (
+			_action.state === 'satisfied' &&
+			_action.commitments.fluents[0].atomic === false &&
+			_action.fulfillment_value != null
+		) {
+			await updateFluent(_action.commitments.fluents[0], _action.fulfillment_value);
+		}
 		await updateCommitmentState(_action);
+		dataHasChanged.set(false);
 	}
 
 	export let eventI;
@@ -42,7 +58,9 @@
 	async function getActions(_eventID) {
 		let { data: actions, error } = await supabase
 			.from('actions')
-			.select('id, state, message, commitments (id, title, debtor, creditor)))')
+			.select(
+				'id, state, message, fulfillment_value, commitments (id, title, state, debtor, creditor, fluents(id, atomic, original_balance, balance, max_terms, terms_left))))'
+			)
 			.eq('event_id', _eventID);
 		if (error) throw new Error(error.message);
 		return actions;
@@ -61,8 +79,11 @@
 			</div>
 			<div class="w-8/12 m-auto">
 				<p class="pl-1">
-					Commitment {action.commitments.title} set to
+					Commitment {action.commitments.title}
 					<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">{action.state}</span>
+					{#if action.state === 'satisfied' && action.fulfillment_value != null}
+						({action.fulfillment_value}/{action.commitments.fluents[0].original_balance})
+					{/if}
 					by
 					{#if action.state === 'commited' || action.state === 'activated' || action.state === 'satisfied' || action.state === 'canceled'}
 						<span class="italic">{action.commitments.debtor} </span>

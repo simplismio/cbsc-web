@@ -27,7 +27,8 @@
 				commitment_id: _commitment_id,
 				event_id: eventData.id,
 				state: _newState,
-				message: message
+				message: message,
+				fulfillment_value: fulfillmentValue
 			}
 		]);
 		if (error) throw new Error(error.message);
@@ -54,10 +55,19 @@
 		return data;
 	}
 
-	async function updateFluent(_fluent_id, _commitment_id) {
+	async function updateFluent(_fluent_id, _commitment_id, _commitment) {
 		const { data, error } = await supabase
 			.from('fluents')
-			.update([{ commitment_id: _commitment_id }])
+			.update([
+				{
+					commitment_id: _commitment_id,
+					balance:
+						fulfillmentValue == undefined
+							? null
+							: _commitment.fluents[0].balance - fulfillmentValue,
+					terms_left: fulfillmentValue == undefined ? null : _commitment.fluents[0].terms_left - 1
+				}
+			])
 			.eq('id', _fluent_id);
 		return;
 	}
@@ -66,11 +76,11 @@
 		let commitment;
 		if (_context === 'delegate') {
 			commitment = await insertCommitment(_commitment, 'xz', _commitment.creditor);
-			await updateFluent(_commitment.fluents[0].id, commitment[0].id);
+			await updateFluent(_commitment.fluents[0].id, commitment[0].id, _commitment);
 			return commitment[0].id;
 		} else {
 			commitment = await insertCommitment(_commitment, _commitment.debtor, 'yz');
-			await updateFluent(_commitment.fluents[0].id, commitment[0].id);
+			await updateFluent(_commitment.fluents[0].id, commitment[0].id, _commitment);
 			return commitment[0].id;
 		}
 	}
@@ -79,14 +89,22 @@
 		dataHasChanged.set(true);
 		if (_delegate === 0 && _assign === 0) {
 			await insertAction(_commitment.id, nextState(_commitment.state));
-			await updateCommitmentState(_commitment.id, nextState(_commitment.state));
+			if (fulfillmentValue == undefined) {
+				await updateCommitmentState(_commitment.id, nextState(_commitment.state));
+			}
+			if (fulfillmentValue != undefined && fulfillmentValue < _commitment.fluents[0].balance) {
+				await updateFluent(_commitment.fluents[0].id, _commitment.id, _commitment);
+			}
+			if (fulfillmentValue != undefined && fulfillmentValue == _commitment.fluents[0].balance) {
+				await updateCommitmentState(_commitment.id, nextState(_commitment.state));
+				await updateFluent(_commitment.fluents[0].id, _commitment.id, _commitment);
+			}
 		} else if (_delegate === 1) {
 			await updateCommitmentState(_commitment.id, 'canceled');
 			await insertAction(_commitment.id, 'canceled');
 			newCommitmentID = await insertCommitmentProcedure('delegate', _commitment);
 			await insertAction(newCommitmentID, _commitment.state);
 		} else {
-			console.log(_commitment.id);
 			await updateCommitmentState(_commitment.id, 'released');
 			await insertAction(_commitment.id, 'released');
 			newCommitmentID = await insertCommitmentProcedure('assign', _commitment);
@@ -276,7 +294,7 @@
 				</div>
 			{/if}
 
-			{#if commitment.state != 'defined' && commitment.state != 'canceled' && commitment.state != 'released' && commitment.debtor != 'xz'}
+			{#if commitment.state != 'defined' && commitment.state != 'satisfied' && commitment.state != 'canceled' && commitment.state != 'released' && commitment.debtor != 'xz'}
 				<div class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white">
 					<div class="w-3/12 m-auto">
 						<span
@@ -312,7 +330,7 @@
 				</div>
 			{/if}
 
-			{#if commitment.state != 'defined' && commitment.state != 'canceled' && commitment.state != 'released' && commitment.creditor != 'yz'}
+			{#if commitment.state != 'defined' && commitment.state != 'satisfied' && commitment.state != 'canceled' && commitment.state != 'released' && commitment.creditor != 'yz'}
 				<div class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white">
 					<div class="w-3/12 m-auto">
 						<span

@@ -69,7 +69,7 @@
 			<div class="mt-1">
 				<Action eventID={event.id} eventI={i} />
 			</div>
-			<div class="mt-1">
+			<div>
 				<NewAction eventData={event} eventI={i} />
 			</div>
 		</div>
