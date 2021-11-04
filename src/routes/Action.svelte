@@ -2,25 +2,54 @@
 	import supabase from '$lib/db.js';
 	import { dataHasChanged } from '$lib/store.js';
 
-	async function deleteAction(_action) {
-		const { data, error } = await supabase.from('actions').delete().eq('id', _action.id);
+	async function deleteAction(_action_id) {
+		const { data, error } = await supabase.from('actions').delete().eq('id', _action_id);
+		console.log(error);
 		return;
 	}
 
-	async function updateCommitmentState(_action) {
+	async function deleteCommitment(_commitment_id) {
+		//console.log(_commitment_id);
+
+		const { data, error } = await supabase.from('commitments').delete().eq('id', _commitment_id);
+		return;
+	}
+
+	async function updatePreviousFluentState(_fluent_id, _previous_commitment_id) {
+		const { data, error } = await supabase
+			.from('fluents')
+			.update({ commitment_id: _previous_commitment_id })
+			.eq('id', _fluent_id);
+		return;
+	}
+
+	async function updatePreviousCommitmentState(_previous_commitment_id, _previous_state) {
+		const { data, error } = await supabase
+			.from('commitments')
+			.update({ state: _previous_state })
+			.eq('id', _previous_commitment_id);
+		return;
+	}
+
+	function newState(_state) {
 		let _newState;
 
-		switch (_action.state) {
+		switch (_state) {
 			case 'committed':
 				_newState = 'defined';
 				break;
 			case 'activated':
-				_newState = 'commited';
+				_newState = 'committed';
 				break;
 			case 'satisfied':
 				_newState = 'activated';
 				break;
 		}
+		return _newState;
+	}
+
+	async function updateCommitmentState(_action) {
+		let _newState = newState(_action.state);
 
 		const { data, error } = await supabase
 			.from('commitments')
@@ -37,18 +66,63 @@
 		return;
 	}
 
-	async function deleteActionProcedure(_action) {
+	async function deleteActionProcedure(_action, _actions, _i) {
 		dataHasChanged.set(true);
-		await deleteAction(_action);
 
 		if (
 			_action.state === 'satisfied' &&
 			_action.commitments.fluents[0].atomic === false &&
 			_action.fulfillment_value != null
 		) {
+			await deleteAction(_action.id);
 			await updateFluent(_action.commitments.fluents[0], _action.fulfillment_value);
 		}
-		await updateCommitmentState(_action);
+
+		if (_action.state === 'canceled' || _action.state === 'released') {
+			await updatePreviousCommitmentState(_action.commitments.id, _actions[_i + 1].state);
+			await updatePreviousFluentState(
+				_actions[_i + 1].commitments.fluents[0].id,
+				_action.commitments.id
+			);
+
+			await deleteAction(_action.id);
+			await deleteAction(_actions[_i + 1].id);
+			await deleteCommitment(_actions[_i + 1].commitments.id);
+		}
+
+		if (
+			_action.state === 'committed' ||
+			(_action.state === 'activated' &&
+				(_actions[_action.id - 1].state === 'canceled' ||
+					_actions[_action.id - 1].state === 'released'))
+		) {
+			try {
+				await updatePreviousCommitmentState(_actions[_i - 1].commitments.id, _action.state);
+				await updatePreviousFluentState(
+					_action.commitments.fluents[0].id,
+					_actions[_i - 1].commitments.id
+				);
+				await deleteAction(_action.id);
+				await deleteAction(_actions[_i - 1].id);
+				await deleteCommitment(_action.commitments.id);
+			} catch (err) {
+				console.log(err.message);
+			}
+		}
+
+		if (
+			_action.state === 'committed' ||
+			(_action.state === 'activated' &&
+				(_actions[_action.id - 1].state != 'canceled' ||
+					_actions[_action.id - 1].state != 'released'))
+		) {
+			try {
+				await updateCommitmentState(_action);
+				await deleteAction(_action.id);
+			} catch (err) {
+				console.log(err.message);
+			}
+		}
 		dataHasChanged.set(false);
 	}
 
@@ -59,7 +133,7 @@
 		let { data: actions, error } = await supabase
 			.from('actions')
 			.select(
-				'id, state, message, fulfillment_value, commitments (id, title, state, debtor, creditor, fluents(id, atomic, original_balance, balance, max_terms, terms_left))))'
+				'id, state, message, fulfillment_value, commitments (id, title, state, debtor, creditor, fluents(id, commitment_id, atomic, original_balance, balance, max_terms, terms_left))))'
 			)
 			.eq('event_id', _eventID);
 		if (error) throw new Error(error.message);
@@ -86,7 +160,7 @@
 					{/if}
 					by
 					<span class="font-bold">
-						{#if action.state === 'commited' || action.state === 'activated' || action.state === 'satisfied' || action.state === 'canceled'}
+						{#if action.state === 'committed' || action.state === 'activated' || action.state === 'satisfied' || action.state === 'canceled'}
 							{action.commitments.debtor}
 						{/if}
 						{#if action.state === 'released'}
@@ -100,7 +174,7 @@
 			</div>
 			<div class="w-1/12 m-auto">
 				<button
-					on:click|preventDefault={() => deleteActionProcedure(action)}
+					on:click|preventDefault={() => deleteActionProcedure(action, actions, i)}
 					class="text-red-600 text-2xl font-bold rounded pr-2 float-right"
 				>
 					-

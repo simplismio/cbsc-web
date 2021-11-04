@@ -1,5 +1,6 @@
 <script>
 	import supabase from '$lib/db.js';
+	import Loader from './utilities/Loader.svelte';
 
 	let totalScenarios;
 	let calculating;
@@ -336,61 +337,60 @@
 	}
 </script>
 
-<div class="mt-10">
+<div class="mt-20">
 	<p class="text-white">
-		Step 1: <span class="ml-3">
-			<button on:click|preventDefault={countScenarios} class="font-bold dark:text-white">
-				Count unique scenarios
-			</button>
-		</span>
-		{#if totalScenarios != undefined}
-			<span class="bg-green-800  py-1 px-1 rounded font-bold text-sm"
-				>{totalScenarios} scenarios</span
+		{#if calculating != true}
+			<button
+				on:click|preventDefault={countScenarios}
+				class="font-bold dark:text-black bg-white py-2 px-2 rounded"
 			>
+				{#if totalScenarios != undefined}
+					{totalScenarios} unique scenarios
+				{/if}
+				{#if totalScenarios == undefined}
+					Count unique scenarios
+				{/if}
+			</button>
 		{/if}
+
 		{#if calculating == true}
-			<span class="bg-green-800  py-1 px-1 rounded font-bold text-sm">busy</span>
+			<Loader />
 		{/if}
-	</p>
-
-	<p class="dark:text-white mt-5">
-		Step 2: <span class="font-bold ml-2">Run simulation in Truffle (command line)</span>
-	</p>
-
-	<p class="text-white mt-5">
-		Step 3 <span class="ml-3">
-			<button class="font-bold dark:text-white"> Show results </button>
-		</span>
 	</p>
 </div>
 
-<!-- {#await countScenarios() then scenarioTotal}
-	<div class="mt-10">
-		<span class="dark:text-white"
-			>There are <span class="font-bold">{scenarioTotal}</span> possible scenarios for this contract</span
-		>
-	</div> -->
-<!-- {#await getSimulations() then simulations}
+{#if totalScenarios != undefined && calculating == false}
+	{#await getSimulations() then simulations}
 		{#each simulations as simulation, i}
-			{#if i + 1 < scenarioTotal}
+			{#if i + 1 < totalScenarios}
 				{#await getSimulationsByScenario(i + 1) then simulationsByScenario}
-					{#each simulationsByScenario as simulationByScenario, i}
-						<div class="flex flex-wrap text-sm bg-white p-3 rounded dark:bg-black dark:text-white">
-							<div class="w-3/12 m-auto">
-								{simulationByScenario.scenario}
-							</div>
-							<div class="w-5/12">
-								{simulationByScenario.title}
-							</div>
-							<div class="w-4/12 m-auto">
-								{simulationByScenario.state}
-							</div>
+					<div class="max-w-lg rounded w-11/12 mt-10 items-center bg-gray-700 mb-5">
+						<div class="px-1 py-1">
+							{#each simulationsByScenario as simulationByScenario, i}
+								<div class="flex flex-wrap text-sm  p-1 rounded dark:bg-black dark:text-white mt-1">
+									<div class="w-4/12 m-auto">
+										Commitment
+										<span class="font-bold">{simulationByScenario.title}</span>
+									</div>
+									<div class="w-4/12 m-auto">
+										State
+										<span class="font-bold">{simulationByScenario.state}</span>
+									</div>
+
+									<div class="w-4/12 m-auto">
+										Debtor:
+										{simulationByScenario.debtor}
+										| Creditor:
+										{simulationByScenario.creditor}
+									</div>
+								</div>
+							{/each}
 						</div>
-					{/each}
+					</div>
 				{/await}
 			{/if}
 		{/each}
-	{/await} -->
-<!-- {:catch error}
-	<span class="text-sm">{error}</span>
-{/await} -->
+	{:catch error}
+		<span class="text-sm">{error}</span>
+	{/await}
+{/if}

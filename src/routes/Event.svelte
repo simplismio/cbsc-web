@@ -4,7 +4,7 @@
 	import { dataHasChanged } from '$lib/store.js';
 	import Action from './Action.svelte';
 	import NewAction from './NewAction.svelte';
-	import Loader from './Loader.svelte';
+	import Loader from './utilities/Loader.svelte';
 
 	let events = [];
 

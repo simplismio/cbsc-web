@@ -1,6 +1,5 @@
 <script>
 	// @ts-nocheck
-
 	import supabase from '$lib/db.js';
 	import { dataHasChanged } from '$lib/store.js';
 
@@ -117,9 +116,9 @@
 		let _nextState;
 		switch (_state) {
 			case 'defined':
-				_nextState = 'commited';
+				_nextState = 'committed';
 				break;
-			case 'commited':
+			case 'committed':
 				_nextState = 'activated';
 				break;
 			case 'activated':
@@ -146,16 +145,16 @@
 					<div class="w-8/12">
 						<p class="pl-1">
 							Commitment <span class="font-bold">{commitment.title}</span>
-							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">commited</span>
+							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">committed</span>
 							by
-							<span class="italic">{commitment.debtor}</span>
+							<span class="font-bold">{commitment.debtor}</span>
 						</p>
 
 						<input
 							type="text"
 							bind:value={message}
 							class="pt-1 pl-1 bg-black w-full"
-							placeholder="Message: e.g. commited {commitment.title}"
+							placeholder="Message: e.g. committed {commitment.title}"
 						/>
 					</div>
 
@@ -204,7 +203,7 @@
 				</div>
 			{/if}
 
-			{#if commitment.state == 'commited'}
+			{#if commitment.state == 'committed'}
 				<div class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white">
 					<div class="w-3/12 m-auto">
 						<span

@@ -4,7 +4,7 @@
 	import '../app.postcss';
 </script>
 
-<div class="h-screen flex flex-col items-center bg-black dark:bg-black">
+<div class="min-h-screen flex flex-col items-center bg-black dark:bg-black">
 	<nav class=" font-bold mt-10">
 		<span>
 			<a href="/" class="dark:text-white bg-gray-700 p-2 rounded">CBSC</a>
