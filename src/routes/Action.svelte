@@ -4,7 +4,6 @@
 
 	async function deleteAction(_action_id) {
 		const { data, error } = await supabase.from('actions').delete().eq('id', _action_id);
-		console.log(error);
 		return;
 	}
 
@@ -110,18 +109,19 @@
 			}
 		}
 
-		if (
-			_action.state === 'committed' ||
-			(_action.state === 'activated' &&
-				(_actions[_action.id - 1].state != 'canceled' ||
-					_actions[_action.id - 1].state != 'released'))
-		) {
-			try {
-				await updateCommitmentState(_action);
-				await deleteAction(_action.id);
-			} catch (err) {
-				console.log(err.message);
-			}
+		if (_action.state === 'committed' || _action.state === 'activated') {
+			if (
+				_actions[_i - 1].state === 'defined' ||
+				_actions[_i - 1].state === 'committed' ||
+				_actions[_i - 1].state === 'activated' ||
+				_actions[_i - 1].state === 'satisfied'
+			)
+				try {
+					await updateCommitmentState(_action);
+					await deleteAction(_action.id);
+				} catch (err) {
+					console.log(err.message);
+				}
 		}
 		dataHasChanged.set(false);
 	}

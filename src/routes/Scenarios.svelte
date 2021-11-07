@@ -364,24 +364,37 @@
 		{#each simulations as simulation, i}
 			{#if i + 1 < totalScenarios}
 				{#await getSimulationsByScenario(i + 1) then simulationsByScenario}
-					<div class="max-w-lg rounded w-11/12 mt-10 items-center bg-gray-700 mb-5">
+					<div class="max-w-lg rounded w-11/12 mt-5 items-center bg-gray-700">
 						<div class="px-1 py-1">
+							<p>{i + 1}</p>
 							{#each simulationsByScenario as simulationByScenario, i}
-								<div class="flex flex-wrap text-sm  p-1 rounded dark:bg-black dark:text-white mt-1">
-									<div class="w-4/12 m-auto">
-										Commitment
-										<span class="font-bold">{simulationByScenario.title}</span>
+								<div
+									class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white"
+								>
+									<div class="w-3/12 m-auto">
+										<span
+											><span class="font-bold pl-2">Action</span>
+											<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1"
+												>{simulationByScenario.scenario}.{i + 1}</span
+											></span
+										>
 									</div>
-									<div class="w-4/12 m-auto">
-										State
-										<span class="font-bold">{simulationByScenario.state}</span>
-									</div>
-
-									<div class="w-4/12 m-auto">
-										Debtor:
-										{simulationByScenario.debtor}
-										| Creditor:
-										{simulationByScenario.creditor}
+									<div class="w-9/12 m-auto">
+										<p class="pl-1">
+											Commitment <span class="font-bold">{simulationByScenario.title}</span>
+											<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1"
+												>{simulationByScenario.state}</span
+											>
+											by
+											<span class="font-bold">
+												{#if simulationByScenario.state === 'committed' || simulationByScenario.state === 'activated' || simulationByScenario.state === 'satisfied' || simulationByScenario.state === 'canceled'}
+													{simulationByScenario.debtor}
+												{/if}
+												{#if simulationByScenario.state === 'released'}
+													{simulationByScenario.creditor}
+												{/if}
+											</span>
+										</p>
 									</div>
 								</div>
 							{/each}

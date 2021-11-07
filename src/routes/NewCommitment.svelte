@@ -1,7 +1,6 @@
 <script>
 	import supabase from '$lib/db.js';
 	import { dataHasChanged } from '$lib/store.js';
-	import { tick } from 'svelte';
 
 	let commitmentTitleByDebtor;
 	let commitmentTitleByCreditor;
@@ -26,6 +25,12 @@
 
 	//ADD BALANCE AND ORIGINAL BALANCE/PAYMENT TERMS
 	async function insertFluent(_commitment, _title, _isAtomic, _balance, _max_terms) {
+		console.log(_commitment);
+		console.log(_title);
+		console.log(_isAtomic);
+		console.log(_balance);
+		console.log(_max_terms);
+
 		const { data, error } = await supabase.from('fluents').insert([
 			{
 				title: _title,
@@ -33,9 +38,11 @@
 				atomic: _isAtomic,
 				balance: _balance,
 				original_balance: _balance,
-				max_terms: _max_terms
+				max_terms: _max_terms,
+				terms_left: _max_terms
 			}
 		]);
+		console.log(error);
 		return data;
 	}
 
@@ -81,7 +88,6 @@
 		fluentByDebtorPaymentTerms = 1;
 		fluentByCreditorPaymentTerms = 1;
 		isConditional = '';
-		await tick();
 		dataHasChanged.set(false);
 		history.back();
 	}
