@@ -362,7 +362,7 @@
 {#if totalScenarios != undefined && calculating == false}
 	{#await getSimulations() then simulations}
 		{#each simulations as simulation, i}
-			{#if i + 1 < totalScenarios}
+			{#if i + 1 <= totalScenarios}
 				{#await getSimulationsByScenario(i + 1) then simulationsByScenario}
 					<div class="max-w-lg rounded w-11/12 mt-5 items-center bg-gray-700">
 						<div class="px-1 py-1 -mt-1">
