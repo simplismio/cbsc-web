@@ -342,13 +342,13 @@
 		{#if calculating != true}
 			<button
 				on:click|preventDefault={countScenarios}
-				class="font-bold dark:text-black bg-white py-2 px-2 rounded"
+				class="font-bold dark:text-white border-4 border-gray-700 py-2 px-2 rounded"
 			>
 				{#if totalScenarios != undefined}
-					{totalScenarios} unique scenarios
+					{totalScenarios} Unique Scenarios
 				{/if}
 				{#if totalScenarios == undefined}
-					Count unique scenarios
+					Count Unique Scenarios
 				{/if}
 			</button>
 		{/if}
@@ -365,8 +365,7 @@
 			{#if i + 1 < totalScenarios}
 				{#await getSimulationsByScenario(i + 1) then simulationsByScenario}
 					<div class="max-w-lg rounded w-11/12 mt-5 items-center bg-gray-700">
-						<div class="px-1 py-1">
-							<p>{i + 1}</p>
+						<div class="px-1 py-1 -mt-1 mb-3">
 							{#each simulationsByScenario as simulationByScenario, i}
 								<div
 									class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white"
@@ -387,7 +386,7 @@
 											>
 											by
 											<span class="font-bold">
-												{#if simulationByScenario.state === 'committed' || simulationByScenario.state === 'activated' || simulationByScenario.state === 'satisfied' || simulationByScenario.state === 'canceled'}
+												{#if simulationByScenario.state === 'defined' || simulationByScenario.state === 'committed' || simulationByScenario.state === 'activated' || simulationByScenario.state === 'satisfied' || simulationByScenario.state === 'satisfied (partial)' || simulationByScenario.state === 'canceled'}
 													{simulationByScenario.debtor}
 												{/if}
 												{#if simulationByScenario.state === 'released'}
