@@ -23,73 +23,73 @@
 		return data;
 	}
 
-	//ADD BALANCE AND ORIGINAL BALANCE/PAYMENT TERMS
 	async function insertFluent(_commitment, _title, _isAtomic, _balance, _max_terms) {
-		console.log(_commitment);
-		console.log(_title);
-		console.log(_isAtomic);
-		console.log(_balance);
-		console.log(_max_terms);
-
-		const { data, error } = await supabase.from('fluents').insert([
-			{
-				title: _title,
-				commitment_id: _commitment[0].id,
-				atomic: _isAtomic,
-				balance: _balance,
-				original_balance: _balance,
-				max_terms: _max_terms,
-				terms_left: _max_terms
-			}
-		]);
-		console.log(error);
-		return data;
+		try {
+			const { data, error } = await supabase.from('fluents').insert([
+				{
+					title: _title,
+					commitment_id: _commitment[0].id,
+					atomic: _isAtomic,
+					balance: _balance,
+					original_balance: _balance,
+					max_terms: _max_terms,
+					terms_left: _max_terms
+				}
+			]);
+			return data;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function insertCommitmentProcedure() {
-		dataHasChanged.set(true);
+		try {
+			dataHasChanged.set(true);
 
-		let _commitment;
-		let _fluent;
-		let _state = 'defined';
-		let _x = 'x';
-		let _y = 'y';
+			let _commitment;
+			let _fluent;
+			let _state = 'defined';
+			let _x = 'x';
+			let _y = 'y';
 
-		_commitment = await insertCommitment(commitmentTitleByDebtor, _state, _x, _y);
+			_commitment = await insertCommitment(commitmentTitleByDebtor, _state, _x, _y);
 
-		_fluent = await insertFluent(
-			_commitment,
-			fluentTitleByDebtor,
-			fluentByDebtorIsAtomic,
-			fluentValueByDebtor,
-			fluentByDebtorPaymentTerms
-		);
-
-		if (commitmentTitleByCreditor) {
-			_commitment = await insertCommitment(commitmentTitleByCreditor, _state, _y, _x);
 			_fluent = await insertFluent(
 				_commitment,
-				fluentTitleByCreditor,
-				fluentByCreditorIsAtomic,
+				fluentTitleByDebtor,
+				fluentByDebtorIsAtomic,
 				fluentValueByDebtor,
 				fluentByDebtorPaymentTerms
 			);
+
+			if (commitmentTitleByCreditor) {
+				_commitment = await insertCommitment(commitmentTitleByCreditor, _state, _y, _x);
+				_fluent = await insertFluent(
+					_commitment,
+					fluentTitleByCreditor,
+					fluentByCreditorIsAtomic,
+					fluentValueByDebtor,
+					fluentByDebtorPaymentTerms
+				);
+			}
+			commitmentTitleByDebtor = '';
+			commitmentTitleByCreditor = '';
+			fluentByDebtorIsAtomic = '';
+			fluentByCreditorIsAtomic = '';
+			fluentTitleByDebtor = '';
+			fluentTitleByCreditor = '';
+			fluentValueByDebtor = '';
+			fluentValueByCreditor = '';
+			fluentByDebtorIsActionOrAmount = '';
+			fluentByCreditorIsActionOrAmount = '';
+			fluentByDebtorPaymentTerms = 1;
+			fluentByCreditorPaymentTerms = 1;
+			isConditional = '';
+			dataHasChanged.set(false);
+			history.back();
+		} catch (err) {
+			console.log(err.message);
 		}
-		commitmentTitleByDebtor = '';
-		commitmentTitleByCreditor = '';
-		fluentByDebtorIsAtomic = '';
-		fluentByCreditorIsAtomic = '';
-		fluentTitleByDebtor = '';
-		fluentTitleByCreditor = '';
-		fluentValueByDebtor = '';
-		fluentValueByCreditor = '';
-		fluentByDebtorIsActionOrAmount = '';
-		fluentByCreditorIsActionOrAmount = '';
-		fluentByDebtorPaymentTerms = 1;
-		fluentByCreditorPaymentTerms = 1;
-		isConditional = '';
-		dataHasChanged.set(false);
-		history.back();
 	}
 
 	function checkIfFluentByDebtorIsActionOrAmount() {

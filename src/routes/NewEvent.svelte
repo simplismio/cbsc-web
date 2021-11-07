@@ -1,20 +1,22 @@
 <script>
 	import supabase from '$lib/db.js';
 	import { dataHasChanged } from '$lib/store.js';
-	import { tick } from 'svelte';
 
 	let eventTitle;
 	let eventDescription;
 
 	async function insertEvent() {
-		dataHasChanged.set(true);
-		const { data, error } = await supabase
-			.from('events')
-			.insert([{ title: eventTitle, description: eventDescription }]);
-		eventTitle = '';
-		await tick();
-		dataHasChanged.set(false);
-		history.back();
+		try {
+			dataHasChanged.set(true);
+			const { data, error } = await supabase
+				.from('events')
+				.insert([{ title: eventTitle, description: eventDescription }]);
+			eventTitle = '';
+			dataHasChanged.set(false);
+			history.back();
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 </script>
 

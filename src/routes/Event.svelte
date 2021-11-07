@@ -9,23 +9,131 @@
 	let events = [];
 
 	async function getEvents() {
-		let { data: events, error } = await supabase.from('events').select(`
+		try {
+			let { data: events, error } = await supabase.from('events').select(`
 				id,
 				title,
 				description,
 				actions (id, commitments(id, title, debtor, creditor))
 			`);
-		return events;
+			return events;
+		} catch (err) {
+			console.log(err.message);
+		}
+	}
+
+	async function clearCommitments() {
+		let _start;
+		let _counter;
+
+		try {
+			let {
+				data: commitments,
+				error,
+				count
+			} = await supabase.from('commitments').select('id', { count: 'exact' });
+			if (
+				// @ts-ignore
+				commitments == ''
+			) {
+				_start = 0;
+				_counter = 0;
+			} else {
+				_start = commitments[0].id;
+				_counter = commitments[0].id + commitments.length;
+			}
+
+			for (var i = _start ?? 0; i < _counter; i++) {
+				await supabase.from('simulations').delete().match({
+					id: i
+				});
+			}
+		} catch (err) {
+			console.log(err.message);
+		}
+	}
+
+	async function clearActions() {
+		let _start;
+		let _counter;
+
+		try {
+			let {
+				data: actions,
+				error,
+				count
+			} = await supabase.from('actions').select('id', { count: 'exact' });
+			if (
+				// @ts-ignore
+				actions == ''
+			) {
+				_start = 0;
+				_counter = 0;
+			} else {
+				_start = actions[0].id;
+				_counter = actions[0].id + actions.length;
+			}
+
+			for (var i = _start ?? 0; i < _counter; i++) {
+				await supabase.from('actions').delete().match({
+					id: i
+				});
+			}
+		} catch (err) {
+			console.log(err.message);
+		}
+	}
+
+	async function clearFluents() {
+		let _start;
+		let _counter;
+
+		try {
+			let {
+				data: fluents,
+				error,
+				count
+			} = await supabase.from('fluents').select('id', { count: 'exact' });
+			if (
+				// @ts-ignore
+				fluents == ''
+			) {
+				_start = 0;
+				_counter = 0;
+			} else {
+				_start = fluents[0].id;
+				_counter = fluents[0].id + fluents.length;
+			}
+
+			for (var i = _start ?? 0; i < _counter; i++) {
+				await supabase.from('fluents').delete().match({
+					id: i
+				});
+			}
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function deleteEvent(_event) {
-		const { data, error } = await supabase.from('events').delete().eq('id', _event.id);
+		try {
+			await clearActions();
+			await clearFluents();
+			await clearCommitments();
+
+			const { data, error } = await supabase.from('events').delete().eq('id', _event.id);
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function deleteEventProcedure() {
 		dataHasChanged.set(true);
-		await deleteEvent();
-		//await tick();
+		try {
+			await deleteEvent();
+		} catch (err) {
+			console.log(err.message);
+		}
 		dataHasChanged.set(false);
 	}
 

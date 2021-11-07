@@ -3,31 +3,45 @@
 	import { dataHasChanged } from '$lib/store.js';
 
 	async function deleteAction(_action_id) {
-		const { data, error } = await supabase.from('actions').delete().eq('id', _action_id);
-		return;
+		try {
+			const { data, error } = await supabase.from('actions').delete().eq('id', _action_id);
+			return;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function deleteCommitment(_commitment_id) {
-		//console.log(_commitment_id);
-
-		const { data, error } = await supabase.from('commitments').delete().eq('id', _commitment_id);
-		return;
+		try {
+			const { data, error } = await supabase.from('commitments').delete().eq('id', _commitment_id);
+			return;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function updatePreviousFluentState(_fluent_id, _previous_commitment_id) {
-		const { data, error } = await supabase
-			.from('fluents')
-			.update({ commitment_id: _previous_commitment_id })
-			.eq('id', _fluent_id);
-		return;
+		try {
+			const { data, error } = await supabase
+				.from('fluents')
+				.update({ commitment_id: _previous_commitment_id })
+				.eq('id', _fluent_id);
+			return;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function updatePreviousCommitmentState(_previous_commitment_id, _previous_state) {
-		const { data, error } = await supabase
-			.from('commitments')
-			.update({ state: _previous_state })
-			.eq('id', _previous_commitment_id);
-		return;
+		try {
+			const { data, error } = await supabase
+				.from('commitments')
+				.update({ state: _previous_state })
+				.eq('id', _previous_commitment_id);
+			return;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	function newState(_state) {
@@ -48,21 +62,31 @@
 	}
 
 	async function updateCommitmentState(_action) {
-		let _newState = newState(_action.state);
-
-		const { data, error } = await supabase
-			.from('commitments')
-			.update({ state: _newState })
-			.eq('id', _action.commitments.id);
-		return;
+		try {
+			let _newState = newState(_action.state);
+			const { data, error } = await supabase
+				.from('commitments')
+				.update({ state: _newState })
+				.eq('id', _action.commitments.id);
+			return;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function updateFluent(_fluent, _fulfillment_value) {
-		const { data, error } = await supabase
-			.from('fluents')
-			.update({ balance: _fluent.balance + _fulfillment_value, terms_left: _fluent.terms_left + 1 })
-			.eq('id', _fluent.id);
-		return;
+		try {
+			const { data, error } = await supabase
+				.from('fluents')
+				.update({
+					balance: _fluent.balance + _fulfillment_value,
+					terms_left: _fluent.terms_left + 1
+				})
+				.eq('id', _fluent.id);
+			return;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	async function deleteActionProcedure(_action, _actions, _i) {
@@ -130,14 +154,18 @@
 	export let eventID;
 
 	async function getActions(_eventID) {
-		let { data: actions, error } = await supabase
-			.from('actions')
-			.select(
-				'id, state, message, fulfillment_value, commitments (id, title, state, debtor, creditor, fluents(id, commitment_id, atomic, original_balance, balance, max_terms, terms_left))))'
-			)
-			.eq('event_id', _eventID);
-		if (error) throw new Error(error.message);
-		return actions;
+		try {
+			let { data: actions, error } = await supabase
+				.from('actions')
+				.select(
+					'id, state, message, fulfillment_value, commitments (id, title, state, debtor, creditor, fluents(id, commitment_id, atomic, original_balance, balance, max_terms, terms_left))))'
+				)
+				.eq('event_id', _eventID);
+			if (error) throw new Error(error.message);
+			return actions;
+		} catch (err) {
+			console.log(err.message);
+		}
 	}
 </script>
 
