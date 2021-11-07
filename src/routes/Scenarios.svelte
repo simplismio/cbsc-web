@@ -365,7 +365,7 @@
 			{#if i + 1 < totalScenarios}
 				{#await getSimulationsByScenario(i + 1) then simulationsByScenario}
 					<div class="max-w-lg rounded w-11/12 mt-5 items-center bg-gray-700">
-						<div class="px-1 py-1 -mt-1 mb-3">
+						<div class="px-1 py-1 -mt-1">
 							{#each simulationsByScenario as simulationByScenario, i}
 								<div
 									class="flex flex-wrap text-sm bg-white p-3 mt-1 rounded dark:bg-black dark:text-white"
