@@ -5,6 +5,7 @@
 	import Action from './Action.svelte';
 	import NewAction from './NewAction.svelte';
 	import Loader from './utilities/Loader.svelte';
+	import { goto } from '$app/navigation';
 
 	let events = [];
 
@@ -17,37 +18,6 @@
 				actions (id, commitments(id, title, debtor, creditor))
 			`);
 			return events;
-		} catch (err) {
-			console.log(err.message);
-		}
-	}
-
-	async function clearCommitments() {
-		let _start;
-		let _counter;
-
-		try {
-			let {
-				data: commitments,
-				error,
-				count
-			} = await supabase.from('commitments').select('id', { count: 'exact' });
-			if (
-				// @ts-ignore
-				commitments == ''
-			) {
-				_start = 0;
-				_counter = 0;
-			} else {
-				_start = commitments[0].id;
-				_counter = commitments[0].id + commitments.length;
-			}
-
-			for (var i = _start ?? 0; i < _counter; i++) {
-				await supabase.from('simulations').delete().match({
-					id: i
-				});
-			}
 		} catch (err) {
 			console.log(err.message);
 		}
@@ -84,53 +54,19 @@
 		}
 	}
 
-	async function clearFluents() {
-		let _start;
-		let _counter;
-
-		try {
-			let {
-				data: fluents,
-				error,
-				count
-			} = await supabase.from('fluents').select('id', { count: 'exact' });
-			if (
-				// @ts-ignore
-				fluents == ''
-			) {
-				_start = 0;
-				_counter = 0;
-			} else {
-				_start = fluents[0].id;
-				_counter = fluents[0].id + fluents.length;
-			}
-
-			for (var i = _start ?? 0; i < _counter; i++) {
-				await supabase.from('fluents').delete().match({
-					id: i
-				});
-			}
-		} catch (err) {
-			console.log(err.message);
-		}
-	}
-
 	async function deleteEvent(_event) {
 		try {
-			await clearActions();
-			await clearFluents();
-			await clearCommitments();
-
 			const { data, error } = await supabase.from('events').delete().eq('id', _event.id);
 		} catch (err) {
 			console.log(err.message);
 		}
 	}
 
-	async function deleteEventProcedure() {
+	async function deleteEventProcedure(_event) {
 		dataHasChanged.set(true);
 		try {
-			await deleteEvent();
+			await clearActions();
+			await deleteEvent(_event);
 		} catch (err) {
 			console.log(err.message);
 		}
@@ -139,11 +75,8 @@
 
 	onMount(async () => {
 		events = await getEvents();
-		if (events != null) {
-			return {
-				headers: { Location: '/NewEventForm' },
-				status: 302
-			};
+		if (events.length === 0) {
+			goto('/NewEvent');
 		}
 	});
 </script>
@@ -167,7 +100,7 @@
 				</div>
 				<div class="w-1/12 m-auto">
 					<button
-						on:click|preventDefault={deleteEventProcedure}
+						on:click|preventDefault={() => deleteEventProcedure(event)}
 						class="text-red-600 text-2xl font-bold rounded pr-2 float-right"
 					>
 						-

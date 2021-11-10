@@ -116,8 +116,7 @@
 		if (
 			_action.state === 'committed' ||
 			(_action.state === 'activated' &&
-				(_actions[_action.id - 1].state === 'canceled' ||
-					_actions[_action.id - 1].state === 'released'))
+				(_actions[_i - 1].state === 'canceled' || _actions[_i - 1].state === 'released'))
 		) {
 			try {
 				await updatePreviousCommitmentState(_actions[_i - 1].commitments.id, _action.state);

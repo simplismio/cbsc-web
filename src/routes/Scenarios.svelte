@@ -258,6 +258,7 @@
 
 			case 'activated':
 				//partially satisfy
+				console.log(_commitment.title);
 				if (_commitment.fluents[0].atomic === false) {
 					let _counter = 1;
 

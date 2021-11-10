@@ -2,11 +2,12 @@
 	// @ts-nocheck
 	import supabase from '$lib/db.js';
 	import { dataHasChanged } from '$lib/store.js';
+	import { message } from './Message.svelte';
+	import Message from './Message.svelte';
 
 	export let eventData;
 	export let eventI;
 
-	let message;
 	let fulfillmentValue;
 	let newCommitmentID;
 
@@ -175,13 +176,7 @@
 							by
 							<span class="font-bold">{commitment.debtor}</span>
 						</p>
-
-						<input
-							type="text"
-							bind:value={message}
-							class="pt-1 pl-1 bg-black w-full"
-							placeholder="Message: e.g. committed {commitment.title}"
-						/>
+						<Message />
 					</div>
 
 					<div class="w-1/12 m-auto">
@@ -210,13 +205,7 @@
 							by
 							<span class="font-bold">{commitment.debtor}</span>
 						</p>
-
-						<input
-							type="text"
-							bind:value={message}
-							class="pt-1 pl-1 bg-black w-full"
-							placeholder="Message: e.g. activated {commitment.title}"
-						/>
+						<Message />
 					</div>
 					<div class="w-1/12 m-auto">
 						<button
@@ -246,13 +235,7 @@
 							by
 							<span class="font-bold">{commitment.debtor}</span>
 						</p>
-
-						<input
-							type="text"
-							bind:value={message}
-							class="pt-1 pl-1 bg-black w-full"
-							placeholder="Message: e.g. activated {commitment.title}"
-						/>
+						<Message />
 					</div>
 					<div class="w-1/12 m-auto">
 						<button
@@ -300,12 +283,7 @@
 								{/if}
 							</p>
 						{:else}
-							<input
-								type="text"
-								bind:value={message}
-								class="pt-1 pl-1 bg-black w-full"
-								placeholder="Message: e.g. satisfied {commitment.title}"
-							/>
+							<Message />
 						{/if}
 					</div>
 					<div class="w-1/12 m-auto">
@@ -335,13 +313,8 @@
 							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">delegated</span> to
 							<span class="font-bold">xz</span>
 						</p>
-						<p class="pl-1">
-							<input
-								type="text"
-								bind:value={message}
-								class="pt-1 bg-black w-full"
-								placeholder="Message: e.g. delegated {commitment.title} to xz"
-							/>
+						<p>
+							<Message />
 						</p>
 					</div>
 					<div class="w-1/12 m-auto">
@@ -371,13 +344,8 @@
 							<span class="font-bold dark:bg-gray-700 rounded pl-1 pr-1">assigned</span> to
 							<span class="font-bold">yz</span>
 						</p>
-						<p class="pl-1">
-							<input
-								type="text"
-								bind:value={message}
-								class="pt-1 bg-black w-full"
-								placeholder="Message: e.g. assigned {commitment.title} to yz"
-							/>
+						<p>
+							<Message />
 						</p>
 					</div>
 					<div class="w-1/12 m-auto">
