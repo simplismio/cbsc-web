@@ -267,7 +267,7 @@
 							<span class="font-bold">{commitment.debtor}</span>
 						</p>
 
-						{#if commitment.fluents[0].title != undefined}
+						{#if commitment.fluents[0] != undefined}
 							<p class="pl-1">
 								{#if commitment.fluents[0].atomic == true}
 									Fulfillment of {commitment.fluents[0].title} fulfills {commitment.title}

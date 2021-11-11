@@ -132,20 +132,35 @@
 			}
 		}
 
-		if (_action.state === 'committed' || _action.state === 'activated') {
-			if (
-				_actions[_i - 1].state === 'defined' ||
-				_actions[_i - 1].state === 'committed' ||
-				_actions[_i - 1].state === 'activated' ||
-				_actions[_i - 1].state === 'satisfied'
-			)
+		if (_actions[_i - 1] !== undefined) {
+			if (_action.state === 'committed' || _action.state === 'activated') {
+				if (
+					_actions[_i - 1].state === 'defined' ||
+					_actions[_i - 1].state === 'committed' ||
+					_actions[_i - 1].state === 'activated' ||
+					_actions[_i - 1].state === 'satisfied'
+				) {
+					try {
+						await updateCommitmentState(_action);
+						await deleteAction(_action.id);
+					} catch (err) {
+						console.log(err.message);
+					}
+				}
+			}
+		}
+
+		if (_actions[_i - 1] === undefined) {
+			if (_action.state === 'committed' || _action.state === 'activated') {
 				try {
 					await updateCommitmentState(_action);
 					await deleteAction(_action.id);
 				} catch (err) {
 					console.log(err.message);
 				}
+			}
 		}
+
 		dataHasChanged.set(false);
 	}
 
