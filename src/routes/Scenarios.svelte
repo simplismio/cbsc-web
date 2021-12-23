@@ -267,7 +267,7 @@
 							_simulation[_simulation.length - 1].scenario,
 							_commitment.id,
 							_commitment.title,
-							'satisfied (partial)',
+							'satisfied (p)',
 							_simulation[_simulation.length - 1].debtor,
 							_simulation[_simulation.length - 1].creditor
 						);
@@ -387,7 +387,7 @@
 											>
 											by
 											<span class="font-bold">
-												{#if simulationByScenario.state === 'defined' || simulationByScenario.state === 'committed' || simulationByScenario.state === 'activated' || simulationByScenario.state === 'satisfied' || simulationByScenario.state === 'satisfied (partial)' || simulationByScenario.state === 'canceled'}
+												{#if simulationByScenario.state === 'defined' || simulationByScenario.state === 'committed' || simulationByScenario.state === 'activated' || simulationByScenario.state === 'satisfied' || simulationByScenario.state === 'satisfied (p)' || simulationByScenario.state === 'canceled'}
 													{simulationByScenario.debtor}
 												{/if}
 												{#if simulationByScenario.state === 'released'}
