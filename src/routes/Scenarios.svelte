@@ -258,11 +258,9 @@
 
 			case 'activated':
 				//partially satisfy
-				console.log(_commitment.title);
 				if (_commitment.fluents[0].atomic === false) {
 					let _counter = 1;
-
-					do {
+					while (_counter <= _commitment.fluents[0].max_terms - 1) {
 						await insertSimulation(
 							_simulation[_simulation.length - 1].scenario,
 							_commitment.id,
@@ -272,7 +270,7 @@
 							_simulation[_simulation.length - 1].creditor
 						);
 						_counter++;
-					} while (_counter <= _commitment.fluents[0].max_terms - 1);
+					}
 
 					await insertSimulation(
 						_simulation[_simulation.length - 1].scenario,
@@ -286,6 +284,7 @@
 
 				//full satisfy
 				if (_commitment.fluents[0].atomic === true) {
+					console.log('Test');
 					await insertSimulation(
 						_simulation[_simulation.length - 1].scenario,
 						_commitment.id,
@@ -304,19 +303,17 @@
 
 	async function countScenarios() {
 		calculating = true;
-
 		try {
 			await clearSimulations();
 			let _scenarioCounter = 0;
 			let _scenarios = 0;
-
 			let _commitments = await getCommitments();
+			for (let i = 0; i < 1; i++) {
+				//for (let i = 0; i < _commitments.length; i++) {
 
-			for (let i = 0; i < _commitments.length; i++) {
 				await insertSimulation(1, _commitments[i].id, _commitments[i].title, 'defined', 'x', 'y');
 			}
 			_scenarios = await countUniqueScenarios();
-
 			for (let i = 0; i < _commitments.length; i++) {
 				let _done = false;
 				while (_scenarioCounter < _scenarios) {
@@ -325,12 +322,11 @@
 						_scenarios = await countUniqueScenarios();
 						_done = await simulationBuilder(_simulation, _commitments[i], _scenarioCounter + 1);
 					} while (_done == false);
-
 					_scenarioCounter++;
 					_scenarios = await countUniqueScenarios();
 				}
 			}
-			totalScenarios = _scenarios;
+			totalScenarios = Math.pow(_scenarios, _commitments.length);
 			calculating = false;
 		} catch (err) {
 			console.log(err.message);

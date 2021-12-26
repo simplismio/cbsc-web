@@ -12,9 +12,9 @@
 			<a href="./NewCommitment" class="dark:text-white border-4 border-gray-700 p-2 rounded"
 				>Commitments</a
 			>
-			<a href="./Scenarios" class="dark:text-white border-4 border-gray-700 p-2 rounded"
+			<!-- <a href="./Scenarios" class="dark:text-white border-4 border-gray-700 p-2 rounded"
 				>Simulation</a
-			>
+			> -->
 		</span>
 	</nav>
 

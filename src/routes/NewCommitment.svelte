@@ -54,10 +54,12 @@
 
 			_commitment = await insertCommitment(commitmentTitleByDebtor, _state, _x, _y);
 
+			console.log(fluentByDebtorIsAtomic);
+
 			_fluent = await insertFluent(
 				_commitment,
 				fluentTitleByDebtor,
-				fluentByDebtorIsAtomic,
+				fluentByDebtorIsAtomic == undefined ? true : fluentByDebtorIsAtomic == 1 ? false : true,
 				fluentValueByDebtor,
 				fluentByDebtorPaymentTerms
 			);
@@ -67,7 +69,7 @@
 				_fluent = await insertFluent(
 					_commitment,
 					fluentTitleByCreditor,
-					fluentByCreditorIsAtomic,
+					fluentByCreditorIsAtomic == undefined ? true : fluentByCreditorIsAtomic == 1 ? false : true,
 					fluentValueByDebtor,
 					fluentByDebtorPaymentTerms
 				);
@@ -104,6 +106,8 @@
 		}
 	}
 </script>
+
+{console.log(fluentByDebtorIsAtomic)}
 
 <div class="max-w-lg rounded w-11/12 mt-10 border-4 border-gray-700">
 	<div class="px-6 py-4">
